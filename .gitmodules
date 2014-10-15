@@ -1,0 +1,3 @@
+[submodule "sicp-pdf"]
+	path = sicp-pdf
+	url = ./sicp-pdf
