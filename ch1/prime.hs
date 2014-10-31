@@ -1,6 +1,7 @@
 -- SICP Section 1.2.6 Example, Testing for Primality
 
-import System.Random
+import Control.Monad (replicateM)
+import System.Random (randomRIO)
 
 square x = x * x
 
@@ -22,7 +23,5 @@ expmod base exp m
 
 fermatTest n a = expmod a n n == a
 
-fastPrime n times =
-  all (fermatTest n) . take times . randomRs (1, n - 1)
-
-fastPrimeIO n times = fmap (fastPrime n times) getStdGen
+fastPrimeIO times n =
+  fmap (all (fermatTest n)) $ replicateM times $ randomRIO $ (1, n - 1)
