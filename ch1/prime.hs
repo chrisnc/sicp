@@ -22,7 +22,7 @@ expmod base exp m
 
 fermatTest n a = expmod a n n == a
 
-fastPrime n times rgen =
-  and $ map (fermatTest n) $ take times $ randomRs (1, n - 1) rgen
+fastPrime n times =
+  all (fermatTest n) . take times . randomRs (1, n - 1)
 
-fastPrimeIO n times = fmap (fastPrime n times) newStdGen
+fastPrimeIO n times = fmap (fastPrime n times) getStdGen
