@@ -3,10 +3,14 @@
 (define (square x) (* x x))
 (define (smallest-divisor n) (find-divisor n 2))
 
+(define (next d)
+  (cond ((= d 2) 3)
+        (else (+ d 2))))
+
 (define (find-divisor n test-divisor)
   (cond ((> (square test-divisor) n) n)
         ((divides? test-divisor n) test-divisor)
-        (else (find-divisor n (+ test-divisor 1)))))
+        (else (find-divisor n (next test-divisor)))))
 
 (define (divides? a b) (= (remainder b a) 0))
 
@@ -33,3 +37,24 @@
   (cond ((= times 0) true)
         ((fermat-test n) (fast-prime? n (- times 1)))
         (else false)))
+
+(define (timed-prime-test n)
+  (newline)
+  (display n)
+  (start-prime-test n (current-milliseconds)))
+
+(define (start-prime-test n start-time)
+  (when (fast-prime? n 20)
+    (report-prime (- (current-milliseconds) start-time))))
+
+(define (report-prime elapsed-time)
+  (display " *** ")
+  (display elapsed-time))
+
+(define (search-for-primes lo hi)
+  (when (<= lo hi)
+    (begin
+      (timed-prime-test lo)
+      (search-for-primes (+ lo 1) hi))))
+
+(search-for-primes 2 1000000)

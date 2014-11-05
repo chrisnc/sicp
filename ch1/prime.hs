@@ -2,6 +2,7 @@
 
 import Control.Monad (replicateM)
 import System.Random
+import Data.Time.Clock
 
 square x = x * x
 
@@ -23,7 +24,35 @@ expmod base exp m
 
 fermatTest n a = expmod a n n == a
 
+-- exercise 1.22
+timedPrimeTest n = do
+  putStr $ show n
+  getCurrentTime >>= startPrimeTest n
+
+startPrimeTest n startTime = do
+  isprime <- fastPrimeIO 3 n
+  if isprime
+    then do
+      resultTime <- getCurrentTime
+      reportPrime $ diffUTCTime resultTime startTime
+    else putStrLn ""
+
+reportPrime elapsedTime =
+  putStrLn $ " *** " ++ show elapsedTime
+
+searchForPrimes :: Int -> Int -> IO ()
+searchForPrimes lo hi =
+  mapM_ timedPrimeTest [lo..hi]
+
+main = searchForPrimes 2 1000000
+
 randomNumbers n = replicateM n . randomRIO
+
+-- exercise 1.27
+-- all fermatTestAll charmichael = True
+
+fermatTestAll n = all (fermatTest n) [1..(n-1)]
+charmichael = [561, 1105, 1729, 2465, 2821, 6601]
 
 fastPrimeIO times n =
   fmap (all (fermatTest n)) $ randomNumbers times (1, n - 1)
