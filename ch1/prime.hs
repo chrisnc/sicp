@@ -56,3 +56,18 @@ charmichael = [561, 1105, 1729, 2465, 2821, 6601]
 
 fastPrimeIO times n =
   fmap (all (fermatTest n)) $ randomNumbers times (1, n - 1)
+
+expmod' base exp m
+  | exp == 0  = 1
+  | even exp  =
+    let z = expmod' base (exp `div` 2) m
+        zsqm = rem (square z) m
+    in if z /= 1 && z /= m - 1 && zsqm == 1
+      then 0
+      else zsqm
+  | otherwise = rem (base * (expmod' base (exp - 1) m)) m
+
+millerRabinTest n a = expmod' a (n - 1) n == 1
+
+millerRabinIO times n =
+  fmap (all (millerRabinTest n)) $ randomNumbers times (1, n - 1)

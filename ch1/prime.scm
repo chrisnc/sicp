@@ -57,4 +57,25 @@
       (timed-prime-test lo)
       (search-for-primes (+ lo 1) hi))))
 
-(search-for-primes 2 1000000)
+(define (expmodt base ex m)
+  (cond ((= ex 0) 1)
+        ((even? ex)
+         (letrec ((z (expmodt base (/ ex 2) m))
+                  (zsqm (remainder (square z) m)))
+           (cond ((and (not (= z 1)) (not (= z (- m 1))) (= zsqm 1)) 0)
+                 (else zsqm))
+           ))
+        (else
+          (remainder
+            (* base (expmod base (- ex 1) m))
+            m))))
+
+(define (miller-rabin-test n)
+  (define (try-it a)
+    (= (expmodt a (- n 1) n) 1))
+  (try-it (+ 1 (random (- n 1)))))
+
+(define (miller-rabin-prime? n times)
+  (cond ((= times 0) true)
+        ((miller-rabin-test n) (miller-rabin-prime? n (- times 1)))
+        (else false)))
