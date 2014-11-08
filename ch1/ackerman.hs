@@ -1,4 +1,4 @@
--- SICP Exercise 1.10, the Ackerman function
+-- SICP Exercise 1.10, the Ackerman function, page 47
 
 ackerman :: (Eq a, Num a) => a -> a -> a
 ackerman x y

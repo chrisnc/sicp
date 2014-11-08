@@ -1,4 +1,4 @@
--- SICP Exercise 1.11, recursive and iterative processes
+-- SICP Exercise 1.11, recursive and iterative processes, page 53
 
 f :: (Ord a, Num a) => a -> a
 f n

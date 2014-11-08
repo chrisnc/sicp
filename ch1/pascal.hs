@@ -1,4 +1,4 @@
--- SICP Exercise 1.12, Pascal's triangle
+-- SICP Exercise 1.12, Pascal's triangle, page 53
 
 -- generate an individual element
 pascal r c

@@ -1,4 +1,4 @@
-; SICP Section 1.2.2 example, Fibonacci numbers
+; SICP Section 1.2.2 example, Fibonacci numbers, page 47
 
 (define (fib n)
   (cond ((= n 0) 0)

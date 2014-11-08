@@ -1,4 +1,4 @@
-; SICP Exercise 1.19, Fibonacci numbers in logarithmic time
+; SICP Exercise 1.19, Fibonacci numbers in logarithmic time, page 61
 
 ; a' <- (q + p)a + qb
 ; b' <- qa + pb

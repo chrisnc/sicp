@@ -1,4 +1,4 @@
--- SICP Section 1.2.1 example, factorial
+-- SICP Section 1.2.1 example, factorial, page 41
 
 factorial :: (Eq a, Num a) => a -> a
 factorial 1 = 1

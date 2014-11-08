@@ -1,4 +1,4 @@
--- SICP Exercise 1.17, multiplication by repeated addition
+-- SICP Exercise 1.17, multiplication by repeated addition, page 60
 
 mul a b =
   if b == 0
@@ -14,7 +14,7 @@ fastmul a b
   | otherwise = b + (fastmul (a - 1) b)
 
 
--- Exercise 1.18
+-- Exercise 1.18, page 61
 
 fastnewmul :: Integral a => a -> a -> a
 fastnewmul = iter 0 where

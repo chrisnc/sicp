@@ -1,4 +1,4 @@
-; SICP Section 1.2.4, Exponentiation
+; SICP Section 1.2.4, Exponentiation, page 57
 
 (define (expt b n)
   (if (= n 0)

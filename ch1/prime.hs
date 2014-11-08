@@ -1,4 +1,4 @@
--- SICP Section 1.2.6 Example, Testing for Primality
+-- SICP Section 1.2.6 Example: Testing for Primality, page 65
 
 import Control.Monad (replicateM)
 import System.Random
@@ -7,6 +7,9 @@ import Data.Time.Clock
 square x = x * x
 
 smallestDivisor n = findDivisor n 2
+
+-- exercise 1.21, page 70
+-- map smallestDivisor [199, 1999, 19999]
 
 findDivisor n testDivisor
   | square testDivisor > n = n
@@ -24,14 +27,16 @@ expmod base exp m
 
 fermatTest n a = expmod a n n == a
 
--- exercise 1.22
+-- exercise 1.22, page 70
 timedPrimeTest n = do
   putStr $ show n
   getCurrentTime >>= startPrimeTest n
 
 startPrimeTest n startTime = do
-  isprime <- fastPrimeIO 3 n
-  if isprime
+-- exercise 1.24, page 72
+  --isprime <- fastPrimeIO 3 n
+  --if isprime
+  if prime n
     then do
       resultTime <- getCurrentTime
       reportPrime $ diffUTCTime resultTime startTime
@@ -46,17 +51,31 @@ searchForPrimes lo hi =
 
 main = searchForPrimes 2 1000000
 
+-- exercise 1.23, page 71
+findDivisor' n testDivisor
+  | square testDivisor > n = n
+  | divides testDivisor n  = testDivisor
+  | otherwise              = findDivisor n $ nextDivisor testDivisor
+
+smallestDivisor' n = findDivisor' n 2
+
+nextDivisor n = if n == 2 then 3 else n + 2
+
+fastPrimeIO times n =
+  fmap (all (fermatTest n)) $ randomNumbers times (1, n - 1)
+
 randomNumbers n = replicateM n . randomRIO
 
--- exercise 1.27
+-- exercise 1.27, page 73
 -- all fermatTestAll charmichael = True
 
 fermatTestAll n = all (fermatTest n) [1..(n-1)]
 charmichael = [561, 1105, 1729, 2465, 2821, 6601]
 
-fastPrimeIO times n =
+fastFermatPrimeIO times n =
   fmap (all (fermatTest n)) $ randomNumbers times (1, n - 1)
 
+-- exercise 1.28, page 73
 expmod' base exp m
   | exp == 0  = 1
   | even exp  =

@@ -1,4 +1,4 @@
-; SICP Exercise 1.17, multiplication by repeated addition
+; SICP Exercise 1.17, multiplication by repeated addition, page 60
 
 (define (* a b)
   (if (= b 0)
@@ -14,7 +14,7 @@
         (else (+ b (fast* (- a 1) b)))))
 
 
-; Exercise 1.18
+; Exercise 1.18, page 61
 
 (define (fastnew* a b)
   (define (iter a b t)
