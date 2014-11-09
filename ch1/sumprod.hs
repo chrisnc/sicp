@@ -3,6 +3,11 @@
 import Prime -- for exercise 1.33
 
 mysum term next a b =
+  if a > b
+    then 0
+    else term a + mysum term next (next a) b
+
+mysum' term next a b =
   sum . map term . takeWhile (<= b) $ iterate next a
 
 cube x = x * x * x
