@@ -1,5 +1,9 @@
 -- SICP Exercise 1.10, the Ackerman function, page 47
 
+module Ackerman
+  ( ackerman
+  ) where
+
 ackerman :: (Eq a, Num a) => a -> a -> a
 ackerman x y
   | y == 0    = 0

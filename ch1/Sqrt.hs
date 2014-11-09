@@ -1,6 +1,11 @@
 -- SICP Section 1.1.7 example, Square Roots by Newton's Method, page 28
 
-mySqrt x = rootIter 1 where
+module Sqrt
+  ( sqrt'
+  , cubert
+  ) where
+
+sqrt' x = rootIter 1 where
   rootIter guess =
     if goodEnough guess
       then guess
@@ -9,7 +14,7 @@ mySqrt x = rootIter 1 where
   improve guess = average guess $ x / guess
   average x y = (x + y) / 2
 
-myCubeRoot x = rootIter 1 where
+cubert x = rootIter 1 where
   rootIter guess =
     if goodEnough guess
       then guess

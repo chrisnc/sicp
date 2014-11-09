@@ -1,5 +1,9 @@
 -- SICP Section 1.2.5, Greatest Common Divisors, page 62
 
-mygcd a b
+module GCD
+  ( gcd'
+  ) where
+
+gcd' a b
   | b == 0    = a
-  | otherwise = mygcd b (rem a b)
+  | otherwise = gcd' b (rem a b)

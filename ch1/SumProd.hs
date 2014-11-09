@@ -1,5 +1,25 @@
 -- Section 1.3, Formulating Abstractions with Higher-Order Procedures, page 74
 
+module SumProd
+  ( sumCubes
+  , sumIntegers
+  , piSum
+  , integral
+  , simpson
+  , main
+  , sum'
+  , product'
+  , piProd
+  , product''
+  , accumulate
+  , sumacc
+  , productacc
+  , accumulaterec
+  , filteredAccumulate
+  , sumSqPrimes
+  , prodRelPrime
+  ) where
+
 import Prime -- for exercise 1.33
 
 mysum term next a b =

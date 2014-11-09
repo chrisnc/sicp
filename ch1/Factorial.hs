@@ -1,5 +1,10 @@
 -- SICP Section 1.2.1 example, factorial, page 41
 
+module Factorial
+  ( factorial
+  , factorial'
+  ) where
+
 factorial :: (Eq a, Num a) => a -> a
 factorial 1 = 1
 factorial n = n * factorial (n - 1)

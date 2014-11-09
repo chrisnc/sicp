@@ -1,5 +1,9 @@
 -- SICP Counting Change example, page 51
 
+module Change
+  ( countChange
+  ) where
+
 coins :: Num a => [a]
 coins = [1, 5, 10, 25, 50]
 
