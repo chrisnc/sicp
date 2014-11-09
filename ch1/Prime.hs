@@ -1,5 +1,10 @@
 -- SICP Section 1.2.6 Example: Testing for Primality, page 65
 
+module Prime
+  ( prime
+  )
+  where
+
 import Control.Monad (replicateM)
 import System.Random
 import Data.Time.Clock
