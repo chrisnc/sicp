@@ -1,4 +1,4 @@
--- SICP Exercise 1.10, the Ackerman function, page 47
+-- Exercise 1.10, the Ackerman function, page 47
 
 module Ackerman
   ( ackerman

@@ -1,4 +1,4 @@
-; SICP Section 1.1.7 example, Square Roots by Newton's Method, page 28
+; Section 1.1.7 example, Square Roots by Newton's Method, page 28
 
 (define (sqrt-iter guess x)
   (if (good-enough? guess x)

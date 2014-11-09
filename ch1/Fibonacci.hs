@@ -1,4 +1,4 @@
--- SICP Section 1.2.2 example, Fibonacci numbers, page 47
+-- Section 1.2.2 example, Fibonacci numbers, page 47
 
 module Fibonacci
   ( fib

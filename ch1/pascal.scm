@@ -1,4 +1,4 @@
-; SICP Exercise 1.12, Pascal's triangle, page 53
+; Exercise 1.12, Pascal's triangle, page 53
 
 (define (pascal r c)
   (cond ((or (>= c r) (< c 0)) 0)

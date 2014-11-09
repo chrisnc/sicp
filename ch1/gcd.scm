@@ -1,4 +1,4 @@
-; SICP Section 1.2.5, Greatest Common Divisors, page 62
+; Section 1.2.5, Greatest Common Divisors, page 62
 
 (define (gcd a b)
   (if (= b 0)

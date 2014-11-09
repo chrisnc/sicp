@@ -1,4 +1,4 @@
-; SICP Exercise 1.17, multiplication by repeated addition, page 60
+; Exercise 1.17, multiplication by repeated addition, page 60
 
 (define (* a b)
   (if (= b 0)

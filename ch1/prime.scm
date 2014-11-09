@@ -1,4 +1,4 @@
-; SICP Section 1.2.6 Example: Testing for Primality, page 65
+; Section 1.2.6 Example: Testing for Primality, page 65
 
 (define (square x) (* x x))
 (define (smallest-divisor n) (find-divisor n 2))

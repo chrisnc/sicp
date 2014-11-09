@@ -1,4 +1,4 @@
--- SICP Exercise 1.15, sine of an angle, page 56
+-- Exercise 1.15, sine of an angle, page 56
 
 module Sine
   ( sine'

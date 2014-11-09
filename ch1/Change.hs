@@ -1,4 +1,4 @@
--- SICP Counting Change example, page 51
+-- Counting Change example, page 51
 
 module Change
   ( countChange

@@ -1,4 +1,4 @@
--- SICP Section 1.2.4, Exponentiation, page 57
+-- Section 1.2.4, Exponentiation, page 57
 
 module Exponent
   ( expt

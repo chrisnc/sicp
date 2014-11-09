@@ -1,4 +1,4 @@
-; SICP Section 1.2.1 example, factorial, page 41
+; Section 1.2.1 example, factorial, page 41
 
 (define (factorial n)
   (if (= n 1)
