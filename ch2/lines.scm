@@ -67,10 +67,11 @@
 ; get the center by averaging the four points
 (define (rect-center r)
   (midpoint-segment
-    (midpoint-segment
-      (make-segment (rect-a r) (rect-b r)))
-    (midpoint-segment
-      (make-segment (rect-c r) (rect-d r)))))
+    (make-segment
+      (midpoint-segment
+        (make-segment (rect-a r) (rect-b r)))
+      (midpoint-segment
+        (make-segment (rect-c r) (rect-d r))))))
 
 (define (square x) (* x x))
 
