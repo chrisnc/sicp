@@ -3,11 +3,7 @@
 module Tree
   ( Tree(..)
   , list
-  , car
-  , cdr
   , cons
-  , pair
-  , null'
   , append
   , countLeaves
   , deepReverse
@@ -30,57 +26,39 @@ module Tree
 
 data Tree a = Pair (Tree a) (Tree a) | Node a | Nil
 
-list = foldr (Pair . Node) Nil
+cons = Pair
+
+-- when the argument is already a list of Tree a
+list = foldr cons Nil
+
+-- when the argument is not already a list of Tree a
+list' = foldr (cons . Node) Nil
 
 instance Functor Tree where
   fmap f t = case t of
-    Nil -> Nil
-    Node a -> Node (f a)
+    Nil      -> Nil
+    Node a   -> Node (f a)
     Pair a b -> Pair (fmap f a) (fmap f b)
 
-car t = case t of
-  Pair a _ -> a
-  _ -> error "car on a non-pair"
+append a b = case a of
+  Nil      -> b
+  Node _   -> cons a b
+  Pair c d -> cons c (append d b)
 
-cdr t = case t of
-  Pair _ b -> b
-  _ -> error "cdr on a non-pair"
-
-cons = Pair
-
-pair t = case t of
-  Pair _ _ -> True
-  _ -> False
-
-null' t = case t of
-  Nil -> True
-  _ -> False
-
-append a b =
-  if null' a
-    then b
-    else cons (car a) (append (cdr a) b)
-
--- TODO: clean this up a bit
 instance Show a => Show (Tree a) where
   show t = case t of
-    Nil -> "()"
-    Node a -> show a
-    Pair a (Node b) -> "(" ++ show a ++ " . " ++ show b ++ ")"
-    Pair a l@(Pair b c) -> "(" ++ show a ++ showSublist l ++ ")"
-    Pair (Node a) l -> "(" ++ show a ++ showSublist l ++ ")"
-    Pair a Nil -> "(" ++ show a ++ ")"
+    Nil      -> "()"
+    Node a   -> show a
+    Pair a b -> "(" ++ show a ++ showSublist b
 
 showSublist t = case t of
-  Nil -> ""
-  Node a -> " " ++ show a
-  Pair a l@(Pair b c) -> " " ++ show a ++ showSublist l
-  Pair a Nil -> " " ++ show a
-  Pair a b -> " " ++ show a ++ " . " ++ show b
+  Nil      -> ")"
+  Node a   -> " . " ++ show a ++ ")"
+  Pair a b -> " " ++ show a ++ showSublist b
 
 countLeaves t = case t of
-  Nil -> 0
-  Node _ -> 1
+  Nil      -> 0
+  Node _   -> 1
   Pair a b -> countLeaves a + countLeaves b
 
 -- Exercise 2.24, page 149
@@ -120,8 +98,8 @@ l = cons
 --(newline)
 
 -- Exercise 2.26, page 150
-x = list [1,2,3]
-y = list [1,2,3]
+x = list' [1,2,3]
+y = list' [1,2,3]
 
 main = do
   putStrLn $ show $ append x y
@@ -130,19 +108,19 @@ main = do
 
 -- Exercise 2.27, page 150
 deepReverse l = iter Nil l where
-  iter r l
-    | null' l = r
-    | pair (car l) = iter (cons (deepReverse (car l)) r) (cdr l)
-    | otherwise = iter (cons (car l) r) (cdr l)
+  iter r l = case l of
+    Nil                 -> r
+    Node _              -> cons l r
+    Pair s@(Pair a b) c -> iter (cons (deepReverse s) r) c
+    Pair a b            -> iter (cons a r) b
 
 -- Exercise 2.28, page 150
-fringe l
-  | null' l = Nil
-  | pair (car l) = append (fringe (car l)) (fringe (cdr l))
-  | otherwise = cons (car l) (fringe (cdr l))
+fringe l = case l of
+  Nil      -> Nil
+  Node _   -> l
+  Pair a b -> append (fringe a) (fringe b)
 
 -- Exercise 2.29, page 151
-
 data Mobile = Mobile
   { leftBranch :: Branch
   , rightBranch :: Branch
@@ -182,8 +160,8 @@ balancedMobile m =
 
 -- Mapping over trees, page 152
 scaleTree tree factor = case tree of
-  Nil -> Nil
-  Node a -> Node (factor * a)
+  Nil      -> Nil
+  Node a   -> Node (factor * a)
   Pair a b -> cons (scaleTree a factor) (scaleTree b factor)
 
 -- see above for fmap implementation
@@ -193,8 +171,8 @@ scaleTree' tree factor = fmap (* factor) tree
 square x = x * x
 
 squareTree tree = case tree of
-  Nil -> Nil
-  Node a -> Node (square a)
+  Nil      -> Nil
+  Node a   -> Node (square a)
   Pair a b -> cons (squareTree a) (squareTree b)
 
 squareTree' tree = fmap square tree
@@ -204,11 +182,19 @@ squareTree' tree = fmap square tree
 treeMap :: (a -> b) -> Tree a -> Tree b
 treeMap = fmap
 
+-- this version of map operates on the first level list structure
+map' :: (Tree a -> Tree b) -> Tree a -> Tree b
+map' f t = case t of
+  Nil      -> Nil
+  Node _   -> f t
+  Pair a b -> cons (f a) (map' f b)
+
 -- Exercise 2.32, page 154
-subsets s
-  | null' s = list [Nil]
-  | otherwise = let rest = subsets (cdr s) in
-      append rest (fmap (\x -> cons (car s) x) rest)
+subsets s = case s of
+  Nil      -> cons Nil Nil
+  Node _   -> cons s Nil
+  Pair a b -> let rest = subsets b
+    in append rest (map' (cons a) rest)
 
 -- This works by letting rest be the set of all subsets of s that do not contain
 -- the first element of s, and appending this to the list containing each element
