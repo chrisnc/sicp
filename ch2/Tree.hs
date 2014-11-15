@@ -158,6 +158,23 @@ balancedMobile m =
 -- part d
 -- We used records, and it was easier.
 
+-- testing
+-- this mobile is balanced
+mb = Mobile
+       (Branch 3 (Weight 40))
+       (Branch 10 (Submobile
+         (Mobile
+           (Branch 1 (Weight 8))
+           (Branch 2 (Weight 4)))))
+
+-- this mobile is not balanced
+mu = Mobile
+       (Branch 13 (Weight 10))
+       (Branch 10 (Submobile
+         (Mobile
+           (Branch 1 (Weight 9))
+           (Branch 2 (Weight 4)))))
+
 -- Mapping over trees, page 152
 scaleTree tree factor = case tree of
   Nil      -> Nil
