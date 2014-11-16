@@ -24,7 +24,7 @@ module Tree
   , subsets
   ) where
 
-data Tree a = Pair (Tree a) (Tree a) | Node a | Nil
+data Tree a = Pair (Tree a) (Tree a) | Node a | Nil deriving Eq
 
 cons = Pair
 
@@ -63,19 +63,7 @@ countLeaves t = case t of
 
 -- Exercise 2.24, page 149
 -- (list 1 (list 2 (list 3 4)))
-l = cons
-      (Node 1)
-      (cons
-        (cons
-          (Node 2)
-          (cons
-            (cons
-              (Node 3)
-              (cons
-                (Node 4)
-                Nil))
-            Nil))
-        Nil)
+l = list [Node 1, list [Node 2, list [Node 3, Node 4]]]
 
 -- result from interpreter
 -- '(1 (2 (3 4)))
