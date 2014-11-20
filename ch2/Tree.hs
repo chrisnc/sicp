@@ -3,8 +3,14 @@
 module Tree
   ( Tree(..)
   , list
+  , list'
   , cons
+  , (<:>)
+  , (|:>)
+  , car
+  , cdr
   , append
+  , filterTree
   , countLeaves
   , deepReverse
   , fringe
@@ -21,12 +27,37 @@ module Tree
   , squareTree
   , squareTree'
   , treeMap
+  , map'
   , subsets
   ) where
+
+import Control.Applicative (Applicative(..), (<$>))
+import Data.Foldable (Foldable(foldMap))
+import Data.Monoid (Monoid(..))
 
 data Tree a = Pair (Tree a) (Tree a) | Node a | Nil deriving Eq
 
 cons = Pair
+
+infixr 5 <:>
+(<:>) = cons
+
+-- cons where the first argument has type a (convenient for making lists and
+-- accumulations)
+infixr 5 |:>
+a |:> b = Node a <:> b
+
+-- safe car and cdr, is identity for non-pairs
+-- generally nicer to destructure a Pair than use car and cdr
+car t = case t of
+  Nil -> Nil
+  Node _ -> t
+  Pair a b -> a
+
+cdr t = case t of
+  Nil -> Nil
+  Node _ -> t
+  Pair a b -> b
 
 -- when the argument is already a list of Tree a
 list = foldr cons Nil
@@ -38,12 +69,13 @@ instance Functor Tree where
   fmap f t = case t of
     Nil      -> Nil
     Node a   -> Node (f a)
-    Pair a b -> Pair (fmap f a) (fmap f b)
+    Pair a b -> fmap f a <:> fmap f b
 
-append a b = case a of
-  Nil      -> b
-  Node _   -> cons a b
-  Pair c d -> cons c (append d b)
+instance Foldable Tree where
+  foldMap f t = case t of
+    Nil      -> mempty
+    Node a   -> f a
+    Pair a b -> foldMap f a `mappend` foldMap f b
 
 instance Show a => Show (Tree a) where
   show t = case t of
@@ -60,6 +92,28 @@ countLeaves t = case t of
   Nil      -> 0
   Node _   -> 1
   Pair a b -> countLeaves a + countLeaves b
+
+
+append a b = case a of
+  Nil      -> b
+  Node _   -> cons a b
+  Pair c d -> cons c (append d b)
+
+filterTree p = removeNilSubtrees . pruneTree p
+
+pruneTree p t = case t of
+  Nil                -> Nil
+  Node a | p a       -> t
+         | otherwise -> Nil
+  Pair a b           -> pruneTree p a <:> pruneTree p b
+
+removeNilSubtrees t = case t of
+  Nil          -> Nil
+  Node _       -> t
+  Pair Nil Nil -> Nil
+  Pair a   Nil -> removeNilSubtrees a <:> Nil -- to preserve lists
+  Pair Nil b   -> removeNilSubtrees b
+  Pair a   b   -> removeNilSubtrees a <:> removeNilSubtrees b
 
 -- Exercise 2.24, page 149
 -- (list 1 (list 2 (list 3 4)))
@@ -99,8 +153,8 @@ deepReverse l = iter Nil l where
   iter r l = case l of
     Nil                 -> r
     Node _              -> cons l r
-    Pair s@(Pair a b) c -> iter (cons (deepReverse s) r) c
-    Pair a b            -> iter (cons a r) b
+    Pair s@(Pair a b) c -> iter (deepReverse s <:> r) c
+    Pair a b            -> iter (a <:> r) b
 
 -- Exercise 2.28, page 150
 fringe l = case l of
@@ -167,7 +221,7 @@ mu = Mobile
 scaleTree tree factor = case tree of
   Nil      -> Nil
   Node a   -> Node (factor * a)
-  Pair a b -> cons (scaleTree a factor) (scaleTree b factor)
+  Pair a b -> scaleTree a factor <:> scaleTree b factor
 
 -- see above for fmap implementation
 scaleTree' tree factor = fmap (* factor) tree
@@ -178,7 +232,7 @@ square x = x * x
 squareTree tree = case tree of
   Nil      -> Nil
   Node a   -> Node (square a)
-  Pair a b -> cons (squareTree a) (squareTree b)
+  Pair a b -> squareTree a <:> squareTree b
 
 squareTree' tree = fmap square tree
 
@@ -192,14 +246,13 @@ map' :: (Tree a -> Tree b) -> Tree a -> Tree b
 map' f t = case t of
   Nil      -> Nil
   Node _   -> f t
-  Pair a b -> cons (f a) (map' f b)
+  Pair a b -> f a <:> map' f b
 
 -- Exercise 2.32, page 154
 subsets s = case s of
-  Nil      -> cons Nil Nil
-  Node _   -> cons s Nil
-  Pair a b -> let rest = subsets b
-    in append rest (map' (cons a) rest)
+  Nil      -> Nil <:> Nil
+  Node _   -> s <:> Nil
+  Pair a b -> append rest (map' (a <:>) rest) where rest = subsets b
 
 -- This works by letting rest be the set of all subsets of s that do not contain
 -- the first element of s, and appending this to the list containing each element
