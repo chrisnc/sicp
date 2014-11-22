@@ -10,7 +10,7 @@ module Tree
   , car
   , cdr
   , append
-  , filterTree
+  , filter'
   , countLeaves
   , deepReverse
   , fringe
@@ -99,7 +99,7 @@ append a b = case a of
   Node _   -> cons a b
   Pair c d -> cons c (append d b)
 
-filterTree p = removeNilSubtrees . pruneTree p
+filter' p = removeNilSubtrees . pruneTree p
 
 pruneTree p t = case t of
   Nil                -> Nil

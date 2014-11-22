@@ -74,16 +74,16 @@ enumerateTree tree = case tree of
   Node _   -> list [tree]
   Pair a b -> append (enumerateTree a) (enumerateTree b)
 
-sumOddSquares' = accumulate (+) 0 . fmap square . filterTree odd
+sumOddSquares' = accumulate (+) 0 . fmap square . filter' odd
 
-evenFibs' = accumulate (|:>) Nil . filterTree even . fmap fib . enumerateInterval 0
+evenFibs' = accumulate (|:>) Nil . filter' even . fmap fib . enumerateInterval 0
 
 listFibSquares = accumulate (|:>) Nil . fmap square . fmap fib . enumerateInterval 0
 
 productOfSquaresOfOddElements =
   accumulate (*) 1 .
   fmap square .
-  filterTree odd
+  filter' odd
 
 data Employee = Employee
   { salary :: Int
@@ -93,7 +93,7 @@ data Employee = Employee
 salaryOfHighestPaidProgrammer =
   accumulate max 0 .
   fmap salary .
-  filterTree isProgrammer
+  filter' isProgrammer
 
 -- Exercise 2.33, page 161
 -- essentially a flatmap
