@@ -96,8 +96,8 @@ countLeaves t = case t of
 
 append a b = case a of
   Nil      -> b
-  Node _   -> cons a b
-  Pair c d -> cons c (append d b)
+  Node _   -> a <:> b
+  Pair c d -> c <:> append d b
 
 filter' p = removeNilSubtrees . pruneTree p
 
@@ -145,14 +145,14 @@ y = list' [1,2,3]
 
 main = do
   putStrLn $ show $ append x y
-  putStrLn $ show $ cons x y
+  putStrLn $ show $ x <:> y
   putStrLn $ show $ list [x, y]
 
 -- Exercise 2.27, page 150
 deepReverse l = iter Nil l where
   iter r l = case l of
     Nil                 -> r
-    Node _              -> cons l r
+    Node _              -> l <:> r
     Pair s@(Pair a b) c -> iter (deepReverse s <:> r) c
     Pair a b            -> iter (a <:> r) b
 
