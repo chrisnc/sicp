@@ -1,7 +1,7 @@
 ; Nested Mappings, page 166
 
-(include "sequence.scm")
-(include "../ch1/prime.scm")
+(include "sequence.rkt")
+(include "prime.rkt")
 
 (define (flatmap proc seq)
   (accumulate append '() (map proc seq)))

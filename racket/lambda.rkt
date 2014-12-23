@@ -1,6 +1,6 @@
 ; Section 1.3.2, Constructing Procedures Using Lambda, page 83
 
-(include "sumprod.scm")
+(include "sumprod.rkt")
 
 (define (pi-sum a b)
   (sum (lambda (x) (/ 1.0 (* x (+ x 2))))

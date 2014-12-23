@@ -103,7 +103,7 @@
   (iter a nv))
 
 ; Exercise 1.33 (a), page 82
-(include "prime.scm")
+(include "prime.rkt")
 
 (define (sum-sq-primes a b)
   (filtered-accumulate + 0 square inc prime? a b))
