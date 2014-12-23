@@ -19,7 +19,7 @@
         ((even? n) (square (fast-expt b (/ n 2))))
         (else (* b (fast-expt b (- n 1))))))
 
-; Exercise 1.16
+; Exercise 1.16, page 59
 
 (define (fast-expt-new b n)
   (define (iter b n a)
