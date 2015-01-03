@@ -12,7 +12,7 @@ e.g., `grep -r 1.19 hs racket` and find which files contain each exercise (if it
 ### How do I get set up? ###
 
 * For running the Haskell examples, installing GHC via your favorite package manager or the [Haskell Platform](https://www.haskell.org/platform/) should be sufficient.
-* For the Racket examples, I used Racket from the [website](http://download.racket-lang.org) but your package manager may have it as well.
+* For the Racket examples, I used [the installer from the Racket website](http://download.racket-lang.org) but your package manager may have it as well.
 
 All of the exercises can be run in their language's respective REPL. For example:
 
