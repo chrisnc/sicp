@@ -6,7 +6,7 @@ I plan to skip over the "picture language" example and exercises (pages 172-192)
 
 I recommend reading and working through the book yourself before looking at the implementations here, especially if you have never taken a class using SICP (which was the case for me).
 
-The exercise and example numbers are contained in the comments in the sources themselves, and the files are named roughly by what concepts/examples are covered by each file.
+The section, exercise, and example numbers are contained in the comments in the sources themselves, and the files are named roughly by what concepts/examples are covered by each file. You should be able to `grep` for any number, e.g., `grep -r 1.19 hs racket` and find which files contain each exercise (if it exists).
 
 ### How do I get set up? ###
 
