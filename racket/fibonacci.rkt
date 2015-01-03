@@ -13,7 +13,7 @@
       (fib-iter (+ a b) a (- count 1))))
   (fib-iter 1 0 n))
 
-; SICP Exercise 1.11, recursive and iterative processes, page 53
+; Exercise 1.11, recursive and iterative processes, page 53
 (define (f n)
   (cond ((< n 3) n)
         (else (+ (f (- n 1))
@@ -31,7 +31,7 @@
                       (- n 1)))))
   (iter 2 1 0 n))
 
-; SICP Exercise 1.19, Fibonacci numbers in logarithmic time, page 61
+; Exercise 1.19, Fibonacci numbers in logarithmic time, page 61
 
 ; a' <- (q + p)a + qb
 ; b' <- qa + pb

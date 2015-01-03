@@ -18,7 +18,7 @@ fib' = iter 1 0 where
     | n == 0 = b
     | otherwise  = iter (a + b) a (n - 1)
 
--- SICP Exercise 1.11, recursive and iterative processes, page 53
+-- Exercise 1.11, recursive and iterative processes, page 53
 f :: (Ord a, Num a) => a -> a
 f n
   | n < 3     = n
@@ -31,7 +31,7 @@ f' = iter 2 1 0 where
     | otherwise = iter (a + 2*b + 3*c) a b (n - 1)
 
 
--- SICP Exercise 1.19, Fibonacci numbers in logarithmic time, page 61
+-- Exercise 1.19, Fibonacci numbers in logarithmic time, page 61
 
 {--
 
