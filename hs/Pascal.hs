@@ -15,13 +15,14 @@ pascal r c
 
 -- version of zipWith that takes a default to use if either of the
 -- lists runs out of elements before the other
+-- (normal zipWith just drops the extra elements)
 zipWithDefault :: (a -> a -> a) -> a -> [a] -> [a] -> [a]
 zipWithDefault f d (x:xs) (y:ys) = f x y : zipWithDefault f d xs ys
 zipWithDefault f d []     (y:ys) = f d y : zipWithDefault f d [] ys
 zipWithDefault f d (x:xs) []     = f x d : zipWithDefault f d xs []
 zipWithDefault _ _ _      _      = []
 
--- produces the Pascal's Triangle up to row n
+-- produces Pascal's Triangle up to row n
 pascalTriangle :: (Num a, Eq a) => a -> [[a]]
 pascalTriangle = iter [1] [] where
   iter l ls n
