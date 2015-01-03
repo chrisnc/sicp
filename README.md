@@ -1,6 +1,6 @@
 # SICP in Haskell #
 
-This is my attempt at working through _Structure and Interpretation of Computer Programs_ in Haskell, implementing each example and exercise that appears in the text. It also includes my Racket (used like Scheme) implementations of the exercises, which I did concurrently. I found a handful of other such attempts online, but none seemed to be complete.
+This is my attempt at working through _Structure and Interpretation of Computer Programs_ in Haskell, implementing each example and exercise that appears in the text. It also includes my Racket (used like Scheme) implementations of the exercises, which I did concurrently.
 
 I plan to skip over the "picture language" example and exercises (pages 172-192).
 
