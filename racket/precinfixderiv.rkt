@@ -39,6 +39,10 @@
 
 ; Exercise 2.58, page 204
 ; part b
+
+; TODO: I think this has some issues
+; the Haskell one is much cleaner :)
+
 ; if the expression contains any '+' in it, it's a sum
 (define (sum? x) (and (pair? x) (memq '+ x)))
 (define (addend expr) (left-expr expr '+))
