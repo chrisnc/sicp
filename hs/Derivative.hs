@@ -1,6 +1,24 @@
+-- Section 2.3.2, Example: Symbolic Differentiation
+
+-- this module subsumes exercises 2.56, 2.57, and 2.58(a,b)
+-- it implements symbolic differentiation with exponentiation
+-- and infix notation with the correct operator precedence using the functions
+-- from Num and a custom exponent operator (^*)
+-- it will pretty-print results in normal mathematical notation
+-- (but does not completely simplify, just simple cases)
+
+-- example usage:
+-- deriv ("x"^*5 + 2*"x") "x"
+-- 5 * x^4 + 2
+
 module Derivative
   ( Expr
+  , mkSum
+  , mkProd
+  , mkExponent
   , deriv
+  , (^*)
+  , asExpr
   ) where
 
 import Data.String
@@ -52,14 +70,16 @@ infixr 8 ^*
 (^*) :: (Num a, Integral b) => Expr a b -> b -> Expr a b
 (^*) = mkExponent
 
+-- TODO
+{-
 instance (Eq a, Num a, Integral b) => Fractional (Expr a b) where
-  (/)          = undefined -- TODO
-  recip        = undefined -- TODO
-  fromRational = undefined -- TODO
+  (/)          = undefined
+  recip        = undefined
+  fromRational = undefined
+-}
 
 -- this lets you create variables by just writing a String literal
 -- using -XOverloadedStrings
--- e.g., deriv ("x"^*5 + 2*"x") "x"
 instance Num a => IsString (Expr a b) where
   fromString = Var
 
@@ -92,6 +112,8 @@ mkExponent x 0                = Constant 1
 mkExponent x 1                = x
 mkExponent x n                = Exponent x n
 
+-- simple way of forcing something in the repl to be interpreted as an
+-- expression, without adding Expr to our default list
 asExpr :: Expr a b -> Expr a b
 asExpr = id
 
