@@ -5,16 +5,18 @@ module Rational
   , makeRat
   ) where
 
-import GHC.Real -- for fromRational
+import qualified GHC.Real as GHCR
 
-data Rat = Rat
-  { numer :: Int
-  , denom :: Int
+data Ratio a = Ratio
+  { numer :: a
+  , denom :: a
   }
 
-makeRat' n d = Rat (n `div` g) (d `div` g) where g = gcd n d
+type Rat = Ratio Integer
 
-instance Num Rat where
+makeRat' n d = Ratio (n `div` g) (d `div` g) where g = gcd n d
+
+instance Integral a => Num (Ratio a) where
   x + y = makeRat (numer x * denom y + numer y * denom x) (denom x * denom y)
   x - y = makeRat (numer x * denom y - numer y * denom x) (denom x * denom y)
   x * y = makeRat (numer x * numer y) (denom x * denom y)
@@ -25,17 +27,17 @@ instance Num Rat where
            | otherwise = (-1)
   fromInteger x = makeRat (fromIntegral x) 1
 
-instance Fractional Rat where
+instance Integral a => Fractional (Ratio a) where
   x / y = makeRat (numer x * denom y) (denom x * numer y)
   fromRational r =
-    makeRat (fromIntegral (numerator r)) (fromIntegral (denominator r))
+    makeRat (fromIntegral (GHCR.numerator r)) (fromIntegral (GHCR.denominator r))
 
-instance Eq Rat where
+instance (Num a, Eq a) => Eq (Ratio a) where
   x == y = numer x * denom y == numer y * denom x
 
-instance Show Rat where
+instance Show a => Show (Ratio a) where
   show x = show (numer x) ++ "/" ++ show (denom x)
 
 -- Exercise 2.1, page 118
 makeRat n d =
-  Rat ((if d < 0 then (- n) else n) `div` g) (abs d `div` g) where g = gcd n d
+  Ratio ((if d < 0 then (- n) else n) `div` g) (abs d `div` g) where g = gcd n d
