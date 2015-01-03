@@ -4,7 +4,7 @@ This is my attempt at working through _Structure and Interpretation of Computer 
 
 I plan to skip over the "picture language" example and exercises (pages 172-192).
 
-I recommend reading and working through the book yourself before looking at the implementations here, especially if you did not take a course on SICP (which was the case for me).
+I recommend reading and working through the book yourself before looking at the implementations here, especially if you have never taken a class using SICP (which was the case for me).
 
 The exercise and example numbers are contained in the comments in the sources themselves, and the files are named roughly by what concepts/examples are covered by each file.
 
