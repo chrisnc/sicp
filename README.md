@@ -1,9 +1,9 @@
-# SICP in Haskell #
+# SICP in Haskell and Racket #
 
 This is my attempt at working through _Structure and Interpretation of Computer
-Programs_ in Haskell, implementing each example and exercise that appears in the
-text. It also includes my Racket (used like Scheme) implementations of the
-exercises, which I did concurrently.
+Programs_ in Haskell and Racket, implementing each example and exercise that
+appears in the text. I am using Racket mostly as a Scheme, the language the book
+is targeted at.
 
 I plan to skip over the "picture language" example and exercises
 (pages 172-192).
@@ -28,9 +28,12 @@ find which files contain each exercise (if it exists).
   website](http://download.racket-lang.org) but your package manager may have it
   as well.
 
-All of the exercises can be run in their language's respective REPL. For
-example:
+All of the exercises can be run in their language's respective REPL.
 
-`ghci Factorial.hs` for the Haskell implementations
+For the Haskell implementations:
 
-`racket -if factorial.rkt` for the Racket implementations
+`ghci Factorial.hs`
+
+For the Racket implementations:
+
+`racket -if factorial.rkt`
