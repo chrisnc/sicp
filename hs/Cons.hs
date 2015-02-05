@@ -1,4 +1,4 @@
--- Section 2.1.3, What is Meant by Data?, 122
+-- Section 2.1.3, What is Meant by Data?, page 122
 
 module Cons
   ( cons
