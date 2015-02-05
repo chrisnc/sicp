@@ -2,7 +2,7 @@
 
 This is my attempt at working through _Structure and Interpretation of Computer
 Programs_ in Haskell and Racket, implementing each example and exercise that
-appears in the text. I am using Racket mostly as a Scheme, the language the book
+appears in the book. I am using Racket mostly as a Scheme, the language the book
 is targeted at.
 
 I plan to skip over the "picture language" example and exercises
