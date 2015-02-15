@@ -122,3 +122,27 @@
           (else
            (merge a (cdr b)))))
   (list-to-tree (merge (tree-to-list-2 set1) (tree-to-list-2 set2))))
+
+
+; Example lookup function for unordered lists, page 217
+; (define (lookup given-key set-of-records)
+;   (cond ((null? set-of-records) false)
+;         ((equal? given-key (key (car set-of-records)))
+;          (car set-of-records))
+;         (else (lookup given-key (cdr set-of-records)))))
+
+(define make-entry cons)
+(define key car)
+(define value cdr)
+
+; Exercise 2.66, page 218
+(define (lookup given-key set-of-records)
+  (if (null? set-of-records)
+    false
+    (let ((root-key (key (entry set-of-records))))
+      (cond ((= given-key root-key)
+             (value (entry set-of-records)))
+            ((< given-key root-key)
+             (lookup given-key (left-branch set-of-records)))
+            (else
+             (lookup given-key (right-branch set-of-records)))))))

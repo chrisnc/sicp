@@ -9,6 +9,7 @@ module TreeSet
   , listToTree
   , unionSet
   , intersectionSet
+  , setLookup
   ) where
 
 -- slightly different from Tree.hs, here nodes can have children and their own
@@ -107,3 +108,13 @@ intersectionSet x y = listToTree (merge (treeToList2 x) (treeToList2 y))
         merge al@(a:as) bl@(b:bs) | a == b    = a : merge as bs
                                   | a <  b    = merge as bl
                                   | otherwise = merge al bs
+
+
+-- Exercise 2.66, page 218
+setLookup :: Ord k => k -> Tree (k,v) -> Maybe v
+setLookup k s =
+  case s of
+    Nil -> Nothing
+    Tree e l r | k == fst e -> Just (snd e)
+               | k <  fst e -> setLookup k l
+               | otherwise  -> setLookup k r
