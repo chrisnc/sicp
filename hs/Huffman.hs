@@ -53,16 +53,6 @@ decode tree = decode1 tree where
       (Tree _ _ _ r, One:bs)  -> decode1 r bs
       (_, [])                 -> []
 
-adjoinSet :: Ord wt => HuffmanTree sym wt -> [HuffmanTree sym wt] -> [HuffmanTree sym wt]
-adjoinSet x s =
-  case s of
-    [] -> [x]
-    e:_ | weight x < weight e -> x : s
-    e:es                      -> e : adjoinSet x es
-
-makeLeafSet :: Ord wt => [(sym,wt)] -> [HuffmanTree sym wt]
-makeLeafSet = foldr (adjoinSet . uncurry Leaf) []
-
 -- Exercise 2.67, page 226
 sampleTree :: Num wt => HuffmanTree Char wt
 sampleTree =
@@ -108,6 +98,17 @@ successiveMerge s =
     [] -> error "no trees to merge"
     [tree] -> tree
     a:b:trees -> successiveMerge (adjoinSet (makeCodeTree b a) trees)
+
+adjoinSet :: Ord wt => HuffmanTree sym wt -> [HuffmanTree sym wt] -> [HuffmanTree sym wt]
+adjoinSet x s =
+  case s of
+    [] -> [x]
+    e:_ | weight x < weight e -> x : s
+    e:es                      -> e : adjoinSet x es
+
+makeLeafSet :: Ord wt => [(sym,wt)] -> [HuffmanTree sym wt]
+makeLeafSet = foldr (adjoinSet . uncurry Leaf) []
+
 
 -- Exercise 2.70, page 228
 fiftiesRockTree :: (Num wt, Ord wt) => HuffmanTree String wt
