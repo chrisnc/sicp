@@ -48,10 +48,10 @@ decode :: HuffmanTree sym wt -> [Bit] -> [sym]
 decode tree = decode1 tree where
   decode1 currentBranch bits =
     case (currentBranch, bits) of
-      (Leaf sym _, bs)        -> sym : decode1 tree bs
-      (Tree _ _ l _, Zero:bs) -> decode1 l bs
-      (Tree _ _ _ r, One:bs)  -> decode1 r bs
-      (_, [])                 -> []
+      (Leaf sym _, _)           -> sym : decode1 tree bits
+      (Tree _ _ l _, Zero:rest) -> decode1 l rest
+      (Tree _ _ _ r, One:rest)  -> decode1 r rest
+      (_, [])                   -> []
 
 -- Exercise 2.67, page 226
 sampleTree :: Num wt => HuffmanTree Char wt
