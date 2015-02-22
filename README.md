@@ -2,8 +2,8 @@
 
 This is my attempt at working through _Structure and Interpretation of Computer
 Programs_ in Haskell and Racket, implementing each example and exercise that
-appears in the book. I am using Racket mostly as a Scheme, the language the book
-is targeted at.
+appears in the book. Racket is used mostly as a Scheme, the language used
+throughout the book.
 
 I plan to skip over the "picture language" example and exercises
 (pages 172-192).
@@ -16,8 +16,8 @@ The section, exercise, and example numbers are contained in the comments in the
 sources themselves, and the files are named roughly by what concepts/examples
 are covered by each file.
 
-You should be able to `grep` for any number, e.g., `grep -r 1.19 hs racket` and
-find which files contain each exercise (if it exists).
+You should be able to `grep` for any number, e.g., `grep -r 1.19 hs rkt` and
+find which files contain a particular exercise or example.
 
 ### How do I get set up? ###
 
