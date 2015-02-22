@@ -1,4 +1,4 @@
-; Section 2.2.1 Representing Sequences, page 134
+; Section 2.2.1, Representing Sequences, page 134
 
 (define (list-ref items n)
   (if (= n 0)

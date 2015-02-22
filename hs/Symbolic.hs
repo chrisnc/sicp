@@ -1,7 +1,9 @@
 -- Section 2.3, Symbolic Data, page 192
 
 module Symbolic
-  (
+  ( memq
+  , isPair
+  , equal
   ) where
 
 import Tree

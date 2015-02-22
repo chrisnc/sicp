@@ -1,4 +1,4 @@
--- Section 1.2.6 Example: Testing for Primality, page 65
+-- Section 1.2.6, Example: Testing for Primality, page 65
 
 module Prime
   ( prime

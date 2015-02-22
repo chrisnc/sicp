@@ -1,4 +1,4 @@
--- Section 1.1.7 example, Square Roots by Newton's Method, page 28
+-- Section 1.1.7, Example: Square Roots by Newton's Method, page 28
 
 module Sqrt
   ( sqrt'

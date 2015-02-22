@@ -1,4 +1,4 @@
--- Section 2.3.2, Example: Symbolic Differentiation
+-- Section 2.3.2, Example: Symbolic Differentiation, page 197
 
 -- this module subsumes exercises 2.56, 2.57, and 2.58(a,b)
 -- it implements symbolic differentiation with exponentiation

@@ -1,4 +1,4 @@
--- Section 1.2.1 example, factorial, page 41
+-- Section 1.2.1, Linear Recursion and Iteration, page 41
 
 module Factorial
   ( factorial

@@ -1,4 +1,4 @@
-; Section 2.3.2, Example: Symbolic Differentiation
+; Section 2.3.2, Example: Symbolic Differentiation, page 197
 
 (define (deriv expr var)
   (cond ((number? expr) 0)
