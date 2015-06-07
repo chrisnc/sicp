@@ -1,4 +1,4 @@
--- Exercise 2.75, complex number constructor in message passing style page 253
+-- Exercise 2.75, complex number constructor in message passing style, page 253
 
 module MPComplex
   ( ComplexOp(..)
@@ -23,3 +23,6 @@ makeFromMagAng r a = dispatch where
   dispatch ImagPart = r * sin a
   dispatch Magnitude = r
   dispatch Angle = a
+
+-- Exercise 2.76, page 253
+-- See rkt/mp-complex.rkt for an answer, which doesn't involve any code.

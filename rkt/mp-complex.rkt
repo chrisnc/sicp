@@ -23,7 +23,7 @@
   dispatch)
 
 
-; Exercise 2.76
+; Exercise 2.76, page 253
 ;
 ; Generic operations with explicit dispatch:
 ;   - To add a new type, each generic operation must be modified to check for
