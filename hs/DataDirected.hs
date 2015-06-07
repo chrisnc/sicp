@@ -15,12 +15,12 @@ square :: Num a => a -> a
 square x = x * x
 
 class Complex c where
-  real :: Floating a => c a -> a
-  imag :: Floating a => c a -> a
-  mag  :: Floating a => c a -> a
-  ang  :: Floating a => c a -> a
-  mkFromRealImag :: Floating a => a -> a -> c a
-  mkFromMagAng   :: Floating a => a -> a -> c a
+  real :: RealFloat a => c a -> a
+  imag :: RealFloat a => c a -> a
+  mag  :: RealFloat a => c a -> a
+  ang  :: RealFloat a => c a -> a
+  mkFromRealImag :: RealFloat a => a -> a -> c a
+  mkFromMagAng   :: RealFloat a => a -> a -> c a
 
   -- default implementations for real and imag in terms of mag and ang
   real z = mag z * cos (ang z)
@@ -28,13 +28,10 @@ class Complex c where
 
   -- default implementations for mag and ang in terms of real and imag
   mag z = sqrt (square (real z) + square (imag z))
-
-  -- TODO: need to fix this implementation, as atan will only give angles
-  -- between -pi/2 and pi/2
-  ang z = atan (imag z / real z)
+  ang z = atan2 (imag z) (real z)
 
   -- default implementation for mkFromRealImag in terms of mkFromMagAng
-  mkFromRealImag x y = mkFromMagAng (sqrt (square x + square y)) (atan (y / x))
+  mkFromRealImag x y = mkFromMagAng (sqrt (square x + square y)) (atan2 y x)
 
   -- default implementation for mkFromMagAng in terms of mkFromRealImag
   mkFromMagAng r a = mkFromRealImag (r * cos a) (r * sin a)
@@ -74,7 +71,7 @@ instance Complex PolarComplex where
 
 -- use an identical instance from hs/Complex.hs, except Complex
 -- is now part of the context for the instance, rather than the type
-instance (Complex c, Floating a) => Num (c a) where
+instance (Complex c, RealFloat a) => Num (c a) where
   u + v = mkFromRealImag (real u + real v) (imag u + imag v)
   u * v = mkFromMagAng   (mag u * mag v)   (ang u + ang v)
   u - v = mkFromRealImag (real u - real v) (imag u - imag v)
@@ -82,10 +79,10 @@ instance (Complex c, Floating a) => Num (c a) where
   signum z = z / abs z
   fromInteger n = mkFromRealImag (fromInteger n) 0
 
-instance (Complex c, Floating a) => Fractional (c a) where
+instance (Complex c, RealFloat a) => Fractional (c a) where
   u / v = mkFromMagAng (mag u / mag v) (ang u - ang v)
   fromRational (n :% d) = mkFromRealImag (fromInteger n / fromInteger d) 0
 
 -- convert complex numbers from one representation to another
-convertComplex :: (Complex c0, Complex c1, Floating a) => c0 a -> c1 a
+convertComplex :: (Complex c0, Complex c1, RealFloat a) => c0 a -> c1 a
 convertComplex z = mkFromRealImag (real z) (imag z)

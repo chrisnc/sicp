@@ -32,29 +32,29 @@ instance Show a => Show (Complex a) where
 -- real, imag, mag, and ang based on the type tag. The implementations are far
 -- too short to be worth separating into different functions, but one could do
 -- this for other cases.
-real :: Floating a => Complex a -> a
+real :: RealFloat a => Complex a -> a
 real z = case z of
   CRect  x _ -> x
   CPolar r a -> r * cos a
 
-imag :: Floating a => Complex a -> a
+imag :: RealFloat a => Complex a -> a
 imag z = case z of
   CRect  _ y -> y
   CPolar r a -> r * sin a
 
-mag :: Floating a => Complex a -> a
+mag :: RealFloat a => Complex a -> a
 mag z = case z of
   CRect  x y -> sqrt (x * x + y * y)
   CPolar r _ -> r
 
-ang :: Floating a => Complex a -> a
+ang :: RealFloat a => Complex a -> a
 ang z = case z of
-  CRect  x y -> atan (y / x) -- TODO: this is incorrect, as atan only gives results between -pi/2 and pi/2
+  CRect  x y -> atan2 y x
   CPolar _ a -> a
 
 -- Using the implementations of real, imag, mag, and ang, we can implement
 -- the Num and Fractional interfaces for our complex number type.
-instance Floating a => Num (Complex a) where
+instance RealFloat a => Num (Complex a) where
   u + v = mkFromRealImag (real u + real v) (imag u + imag v)
   u * v = mkFromMagAng   (mag u * mag v)   (ang u + ang v)
   u - v = mkFromRealImag (real u - real v) (imag u - imag v)
@@ -62,6 +62,6 @@ instance Floating a => Num (Complex a) where
   signum z = z / abs z
   fromInteger n = mkFromRealImag (fromInteger n) 0
 
-instance Floating a => Fractional (Complex a) where
+instance RealFloat a => Fractional (Complex a) where
   u / v = mkFromMagAng (mag u / mag v) (ang u - ang v)
   fromRational (n :% d) = mkFromRealImag (fromInteger n / fromInteger d) 0
