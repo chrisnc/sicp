@@ -2,7 +2,7 @@
 
 {-# LANGUAGE FlexibleInstances #-}
 
-module DataDirected
+module DDComplex
   ( Complex(..)
   , RectComplex
   , PolarComplex
