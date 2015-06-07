@@ -1,5 +1,8 @@
 ; Exercise 2.73, page 248
 
+(require racket/include)
+(include "dd-common.rkt")
+
 (define (deriv e v)
   (cond ((number? e) 0)
         ((variable? e)
@@ -61,7 +64,7 @@
 
 (define (deriv e v)
   (cond ((number? e) 0)
-        ((variable? e) (if (same-variable? e v) 1 ))
+        ((variable? e) (if (same-variable? e v) 1 0))
         (else ((get 'deriv (operator e))
                (operands e) v))))
 
@@ -80,31 +83,31 @@
 
 (define (install-sum-deriv)
   ; internal procedures
-  (define (deriv terms v)
+  (define (sum-deriv terms v)
     (make-sum (deriv (car terms) v)
-              (deriv (cdr terms) v)))
+              (deriv (cadr terms) v)))
   ; interface to the rest of the system
-  (put 'deriv '(+) deriv)
+  (put 'deriv '+ sum-deriv)
   'done)
 
 (define (install-prod-deriv)
   ; internal procedures
-  (define (deriv terms v)
+  (define (prod-deriv terms v)
     (make-sum (make-product
                 (car terms)
-                (deriv (cdr terms) v))
+                (deriv (cadr terms) v))
               (make-product
                 (deriv (car terms) v)
-                (cdr terms))))
+                (cadr terms))))
   ; interface to the rest of the system
-  (put 'deriv '(*) deriv)
+  (put 'deriv '* prod-deriv)
   'done)
 
 ; part c, page 250
 
 (define (install-exponent-deriv)
   ; internal procedures
-  (define (deriv terms v)
+  (define (exp-deriv terms v)
     (make-product
       (cadr terms)
       (make-product
@@ -113,7 +116,7 @@
           (- (cadr terms) 1))
         (deriv (car terms) v))))
   ; interface to the rest of the system
-  (put 'deriv '(**) deriv)
+  (put 'deriv '** exp-deriv)
   'done)
 
 ; part d, page 250
