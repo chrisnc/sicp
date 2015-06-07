@@ -4,7 +4,6 @@
 (define contents cdr)
 
 ; part a
-
 (define (get-record employee-name generic-file)
   ((get 'get-record (type-tag generic-file))
    employee-name (contents generic-file)))
