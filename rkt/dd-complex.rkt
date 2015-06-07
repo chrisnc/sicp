@@ -1,5 +1,10 @@
 ; Section 2.4.3, Data-Directed Programming and Additivity, page 242
 
+(require racket/include)
+(include "dd-common.rkt")
+
+(define (square x) (* x x))
+
 (define (install-rectangular-package)
   ; internal procedures
   (define (real z) (car z))
@@ -48,15 +53,6 @@
   (put 'make-from-mag-ang 'polar
        (lambda (r a) (tag (make-from-mag-ang r a))))
   'done)
-
-(define (apply-generic op . args)
-  (let ((type-tags (map type-tag args)))
-    (let ((proc (get op type-tags)))
-      (if proc
-        (apply proc (map contents args))
-        (error
-          "No method for these types: apply-generic"
-          (list op type-tags))))))
 
 (define (real z) (apply-generic 'real z))
 (define (imag z) (apply-generic 'imag z))
