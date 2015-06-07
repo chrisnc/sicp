@@ -2,6 +2,18 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE StandaloneDeriving #-}
 
+module DDRecords
+  ( Address
+  , Salary
+  , EmployeeName
+  , HasAddress(..)
+  , HasSalary(..)
+  , HasEmployeeRecords(..)
+  , EmployeeRecord(..)
+  , DivisionFile(..)
+  , findEmployeeRecord
+  ) where
+
 import Data.Foldable
 import Data.Map (Map)
 import qualified Data.Map as Map
