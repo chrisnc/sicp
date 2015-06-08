@@ -19,7 +19,9 @@
        (lambda (x y) (tag (* x y))))
   (put 'div '(scheme-number scheme-number)
        (lambda (x y) (tag (/ x y))))
-  (put 'make 'scheme-number tag))
+  (put 'make 'scheme-number tag)
+  (put 'equ? '(scheme-number scheme-number) =)
+  )
 
 (install-scheme-number-package)
 
@@ -58,12 +60,20 @@
   (put 'div '(rational rational)
        (lambda (x y) (tag (div-rat x y))))
   (put 'make 'rational
-       (lambda (n d) (tag (make-rat n d)))))
+       (lambda (n d) (tag (make-rat n d))))
+  (put 'numer '(rational) numer)
+  (put 'denom '(rational) denom)
+  (put 'equ? '(rational rational)
+       (lambda (x y) (and (equal? (numer x) (numer y))
+                          (equal? (denom x) (denom y)))))
+  )
 
 (install-rational-package)
 
 (define (make-rational n d)
   ((get 'make 'rational) n d))
+(define (numer x) (apply-generic 'numer x))
+(define (denom x) (apply-generic 'denom x))
 
 (define (install-complex-package)
   ; imported procedures from rectangular and polar packages
@@ -103,69 +113,33 @@
   ; package to dispatch using apply-generic. The following occurs when we call
   ; 1. (mag '(complex rectangular 3 . 4))
   ; 2. (apply-generic 'mag '(complex rectangular 3 . 4))
-  ; 3. (let ((type-tags (map type-tag '((complex rectangular 3 . 4)))))
-  ;      (let ((proc (get 'mag type-tags)))
-  ;        (if proc
-  ;          (apply proc '((rectangular 3 . 4)))
-  ;          (error
-  ;            "No method for these types: apply-generic"
-  ;            (list 'mag type-tags)))))
-  ; 4. (let ((proc (get 'mag '(complex))))
-  ;      (if proc
-  ;        (apply proc '((rectangular 3 . 4)))
-  ;        (error
-  ;          "No method for these types: apply-generic"
-  ;          (list 'mag '(complex)))))
-  ; 5. (if mag
-  ;      (apply mag '((rectangular 3 . 4)))
-  ;      (error
-  ;        "No method for these types: apply-generic"
-  ;        (list 'mag '(complex))))
-  ; 6. (apply mag '((rectangular 3 . 4)))
-  ; 7. (mag '(rectangular 3 . 4))
-  ; 8. (apply-generic 'mag '(rectangular 3 . 4))
-  ; 9. (let ((type-tags (map type-tag '((rectangular 3 . 4)))))
-  ;      (let ((proc (get 'mag type-tags)))
-  ;        (if proc
-  ;          (apply proc '((rectangular 3 . 4)))
-  ;          (error
-  ;            "No method for these types: apply-generic"
-  ;            (list 'mag type-tags)))))
-  ; 10. (let ((proc (get 'mag '(rectangular))))
-  ;       (if proc
-  ;         (apply proc '((3 . 4)))
-  ;         (error
-  ;           "No method for these types: apply-generic"
-  ;           (list 'mag '(rectangular))))))
-  ; 11. (if mag ; internal to install-rectangular-package
-  ;       (apply mag '((3 . 4)))
-  ;       (error
-  ;         "No method for these types: apply-generic"
-  ;         (list 'mag '(rectangular))))))
-  ; 12. (apply mag '((3 . 4)))
-  ; 13. (mag '(3 . 4))
-  ; 14. (sqrt (+ (square (real '(3 . 4)))
-  ;              (square (imag '(3 . 4)))))
-  ; 15. (sqrt (+ (square (car '(3 . 4)))
-  ;              (square (cdr '(3 . 4)))))
-  ; 16. (sqrt (+ (square 3)
-  ;              (square 4)))
-  ; 17. (sqrt (+ 9 16))
-  ; 18. (sqrt 25)
-  ; 19. 5
+  ; 3. (mag '(rectangular 3 . 4))
+  ; 4. (apply-generic 'mag '(rectangular 3 . 4))
+  ; 5. (mag '(3 . 4))
+  ; 6. 5
 
   ; apply-generic is invoked twice. The first time it strips off the complex
-  ; tag and dispatches to the same implementation of mag.
-  ; The second time it strips off the rectangular tag and dispatches to the
-  ; implementation of mag that is internal to the rectangular package.
+  ; tag and dispatches to the same implementation of mag.  The second time it
+  ; strips off the rectangular tag and dispatches to the implementation of mag
+  ; that is internal to the rectangular package, which actually computes the
+  ; magnitude.
 
   (put 'real '(complex) real)
   (put 'imag '(complex) imag)
   (put 'mag '(complex) mag)
-  (put 'ang '(complex) ang))
+  (put 'ang '(complex) ang)
+  (put 'equ? '(complex complex)
+       (lambda (x y) (and (equal? (real x) (real y))
+                          (equal? (imag x) (imag y)))))
+  )
 (install-complex-package)
 
 (define (make-complex-from-real-imag x y)
   ((get 'make-from-real-imag 'complex) x y))
 (define (make-complex-from-mag-ang r a)
   ((get 'make-from-mag-ang 'complex) r a))
+
+; Exercise 2.79
+; equ? implementations installed in the above packages
+(define (equ? x y)
+  (apply-generic 'equ? x y))
