@@ -1,7 +1,6 @@
 ; Exercise 2.74, page 250
 
-(require racket/include)
-(include "dd-common.rkt")
+(require "dd-common.rkt")
 
 (define (install-computer-division)
   (define (get-record employee-name file)

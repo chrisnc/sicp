@@ -1,7 +1,6 @@
 ; Exercise 2.73, page 248
 
-(require racket/include)
-(include "dd-common.rkt")
+(require "dd-common.rkt")
 
 (define (deriv e v)
   (cond ((number? e) 0)
