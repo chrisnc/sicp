@@ -1,14 +1,7 @@
 ; Section 2.4.3, Data-Directed Programming and Additivity, page 242
 
 (module complex racket/base
-  (provide install-rectangular-package
-            install-polar-package
-            real
-            imag
-            mag
-            ang
-            make-from-real-imag
-            make-from-mag-ang)
+  (provide real imag mag ang make-from-real-imag make-from-mag-ang)
 
   (require "dd-common.rkt")
 
@@ -36,9 +29,9 @@
     (put 'make-from-real-imag 'rectangular
          (lambda (x y) (tag (make-from-real-imag x y))))
     (put 'make-from-mag-ang 'rectangular
-         (lambda (r a) (tag (make-from-mag-ang r a))))
-    'done)
+         (lambda (r a) (tag (make-from-mag-ang r a)))))
 
+  (install-rectangular-package)
 
   (define (install-polar-package)
     ; internal procedures
@@ -60,8 +53,9 @@
     (put 'make-from-real-imag 'polar
          (lambda (x y) (tag (make-from-real-imag x y))))
     (put 'make-from-mag-ang 'polar
-         (lambda (r a) (tag (make-from-mag-ang r a))))
-    'done)
+         (lambda (r a) (tag (make-from-mag-ang r a)))))
+
+  (install-polar-package)
 
   (define (real z) (apply-generic 'real z))
   (define (imag z) (apply-generic 'imag z))
