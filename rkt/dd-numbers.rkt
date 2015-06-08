@@ -21,6 +21,8 @@
        (lambda (x y) (tag (/ x y))))
   (put 'make 'scheme-number tag)
   (put 'equ? '(scheme-number scheme-number) =)
+  (put '=zero? '(scheme-number)
+       (lambda (x) (= x 0)))
   )
 
 (install-scheme-number-package)
@@ -64,8 +66,11 @@
   (put 'numer '(rational) numer)
   (put 'denom '(rational) denom)
   (put 'equ? '(rational rational)
-       (lambda (x y) (and (equal? (numer x) (numer y))
-                          (equal? (denom x) (denom y)))))
+       (lambda (x y) (and (= (numer x) (numer y))
+                          (= (denom x) (denom y)))))
+  (put '=zero? '(rational)
+       (lambda (x) (and (= (numer x) 0)
+                        (not (= (denom x) 0)))))
   )
 
 (install-rational-package)
@@ -129,8 +134,11 @@
   (put 'mag '(complex) mag)
   (put 'ang '(complex) ang)
   (put 'equ? '(complex complex)
-       (lambda (x y) (and (equal? (real x) (real y))
-                          (equal? (imag x) (imag y)))))
+       (lambda (x y) (and (= (real x) (real y))
+                          (= (imag x) (imag y)))))
+  (put '=zero? '(complex)
+       (lambda (x) (and (= (real x) 0)
+                        (= (imag x) 0))))
   )
 (install-complex-package)
 
@@ -139,7 +147,12 @@
 (define (make-complex-from-mag-ang r a)
   ((get 'make-from-mag-ang 'complex) r a))
 
-; Exercise 2.79
+; Exercise 2.79, page 261
 ; equ? implementations installed in the above packages
 (define (equ? x y)
   (apply-generic 'equ? x y))
+
+; Exercise 2.80, page 261
+; =zero? implementations installed in the above packages
+(define (=zero? x)
+  (apply-generic '=zero? x))
