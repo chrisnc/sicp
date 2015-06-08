@@ -11,9 +11,16 @@
   (define (put op types fn)
     (hash-set! dd-table (cons op types) fn))
 
-  (define type-tag car)
-  (define contents cdr)
-  (define attach-tag cons)
+  ; Exercise 2.78, page 261
+  (define (type-tag x)
+    (cond ((number? x) 'scheme-number)
+          (else (car x))))
+  (define (contents x)
+    (cond ((number? x) x)
+          (else (cdr x))))
+  (define (attach-tag tag x)
+    (cond ((and (eq? tag 'scheme-number) (number? x)) x)
+          (else (cons tag x))))
 
   (define (apply-generic op . args)
     (let ((type-tags (map type-tag args)))
