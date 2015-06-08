@@ -97,7 +97,72 @@
   (put 'make-from-real-imag 'complex
        (lambda (x y) (tag (make-from-real-imag x y))))
   (put 'make-from-mag-ang 'complex
-       (lambda (r a) (tag (make-from-mag-ang r a)))))
+       (lambda (r a) (tag (make-from-mag-ang r a))))
+  ; Exercise 2.77, page 260
+  ; This works because real, imag, mag, and ang were defined in the dd-complex
+  ; package to dispatch using apply-generic. The following occurs when we call
+  ; 1. (mag '(complex rectangular 3 . 4))
+  ; 2. (apply-generic 'mag '(complex rectangular 3 . 4))
+  ; 3. (let ((type-tags (map type-tag '((complex rectangular 3 . 4)))))
+  ;      (let ((proc (get 'mag type-tags)))
+  ;        (if proc
+  ;          (apply proc '((rectangular 3 . 4)))
+  ;          (error
+  ;            "No method for these types: apply-generic"
+  ;            (list 'mag type-tags)))))
+  ; 4. (let ((proc (get 'mag '(complex))))
+  ;      (if proc
+  ;        (apply proc '((rectangular 3 . 4)))
+  ;        (error
+  ;          "No method for these types: apply-generic"
+  ;          (list 'mag '(complex)))))
+  ; 5. (if mag
+  ;      (apply mag '((rectangular 3 . 4)))
+  ;      (error
+  ;        "No method for these types: apply-generic"
+  ;        (list 'mag '(complex))))
+  ; 6. (apply mag '((rectangular 3 . 4)))
+  ; 7. (mag '(rectangular 3 . 4))
+  ; 8. (apply-generic 'mag '(rectangular 3 . 4))
+  ; 9. (let ((type-tags (map type-tag '((rectangular 3 . 4)))))
+  ;      (let ((proc (get 'mag type-tags)))
+  ;        (if proc
+  ;          (apply proc '((rectangular 3 . 4)))
+  ;          (error
+  ;            "No method for these types: apply-generic"
+  ;            (list 'mag type-tags)))))
+  ; 10. (let ((proc (get 'mag '(rectangular))))
+  ;       (if proc
+  ;         (apply proc '((3 . 4)))
+  ;         (error
+  ;           "No method for these types: apply-generic"
+  ;           (list 'mag '(rectangular))))))
+  ; 11. (if mag ; internal to install-rectangular-package
+  ;       (apply mag '((3 . 4)))
+  ;       (error
+  ;         "No method for these types: apply-generic"
+  ;         (list 'mag '(rectangular))))))
+  ; 12. (apply mag '((3 . 4)))
+  ; 13. (mag '(3 . 4))
+  ; 14. (sqrt (+ (square (real '(3 . 4)))
+  ;              (square (imag '(3 . 4)))))
+  ; 15. (sqrt (+ (square (car '(3 . 4)))
+  ;              (square (cdr '(3 . 4)))))
+  ; 16. (sqrt (+ (square 3)
+  ;              (square 4)))
+  ; 17. (sqrt (+ 9 16))
+  ; 18. (sqrt 25)
+  ; 19. 5
+
+  ; apply-generic is invoked twice. The first time it strips off the complex
+  ; tag and dispatches to the same implementation of mag.
+  ; The second time it strips off the rectangular tag and dispatches to the
+  ; implementation of mag that is internal to the rectangular package.
+
+  (put 'real '(complex) real)
+  (put 'imag '(complex) imag)
+  (put 'mag '(complex) mag)
+  (put 'ang '(complex) ang))
 (install-complex-package)
 
 (define (make-complex-from-real-imag x y)
