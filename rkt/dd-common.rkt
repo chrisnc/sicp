@@ -1,6 +1,6 @@
 ; Common procedures for data-directed programming.
 
-(module data-directed racket/base
+(module dd-common racket/base
   (provide get put type-tag contents attach-tag apply-generic)
 
   (define dd-table (make-hash))
@@ -12,15 +12,16 @@
     (hash-set! dd-table (cons op types) fn))
 
   ; Exercise 2.78, page 261
+  ; modified to distinguish between integers and real numbers
+  ; by convention, don't attach tags to integers and reals
   (define (type-tag x)
-    (cond ((number? x) 'scheme-number)
+    (cond ((exact-integer? x) 'integer)
+          ((real? x) 'real)
           (else (car x))))
   (define (contents x)
     (cond ((number? x) x)
           (else (cdr x))))
-  (define (attach-tag tag x)
-    (cond ((and (eq? tag 'scheme-number) (number? x)) x)
-          (else (cons tag x))))
+  (define attach-tag cons)
 
   (define (apply-generic op . args)
     (let ((type-tags (map type-tag args)))

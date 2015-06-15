@@ -1,61 +1,61 @@
 ; Section 2.5.1, Generic Arithmetic Operations
 
 (module dd-numbers racket/base
-  (provide add sub mul div make-scheme-number make-rational numer denom
+  (provide add sub mul div make-rational numer denom
            make-complex-from-real-imag
            make-complex-from-mag-ang
-           equ? =zero? real imag mag ang)
+           equ? =zero? real imag mag ang
+           tower-raise tower-order)
 
   (require "dd-common.rkt")
   (require "dd-complex.rkt")
 
-  (define (add x y) (apply-generic 'add x y))
-  (define (sub x y) (apply-generic 'sub x y))
-  (define (mul x y) (apply-generic 'mul x y))
-  (define (div x y) (apply-generic 'div x y))
+  (define (add x y) (apply-generic-tower 'add x y))
+  (define (sub x y) (apply-generic-tower 'sub x y))
+  (define (mul x y) (apply-generic-tower 'mul x y))
+  (define (div x y) (apply-generic-tower 'div x y))
 
-  (define (install-scheme-number-package)
-    (define (tag x) (attach-tag 'scheme-number x))
-    (put 'add '(scheme-number scheme-number)
-         (lambda (x y) (tag (+ x y))))
-    (put 'sub '(scheme-number scheme-number)
-         (lambda (x y) (tag (- x y))))
-    (put 'mul '(scheme-number scheme-number)
-         (lambda (x y) (tag (* x y))))
-    (put 'div '(scheme-number scheme-number)
-         (lambda (x y) (tag (/ x y))))
-    (put 'make 'scheme-number tag)
-    (put 'equ? '(scheme-number scheme-number) =)
-    (put '=zero? '(scheme-number)
-         (lambda (x) (= x 0)))
-    )
+  (define (install-integer-package)
+    (put 'add '(integer integer) +)
+    (put 'sub '(integer integer) -)
+    (put 'mul '(integer integer) *)
+    (put 'div '(integer integer) /)
+    (put 'equ? '(integer integer) =)
+    (put '=zero? '(integer) zero?))
+  (install-integer-package)
 
-  (install-scheme-number-package)
+  (define (install-real-package)
+    (put 'add '(real real) +)
+    (put 'sub '(real real) -)
+    (put 'mul '(real real) *)
+    (put 'div '(real real) /)
+    (put 'equ? '(real real) =)
+    (put '=zero? '(real) zero?))
+  (install-real-package)
 
-  (define (make-scheme-number n)
-    ((get 'make 'scheme-number) n))
 
+  ; expose these for the tower implementation
+  (define rat-numer car)
+  (define rat-denom cdr)
   (define (install-rational-package)
     ; internal procedures
-    (define numer car)
-    (define denom cdr)
     (define (make-rat n d)
       (let ((g (gcd n d)))
         (cons (/ n g) (/ d g))))
     (define (add-rat x y)
-      (make-rat (+ (* (numer x) (denom y))
-                   (* (numer y) (denom x)))
-                (* (denom x) (denom y))))
+      (make-rat (+ (* (rat-numer x) (rat-denom y))
+                   (* (rat-numer y) (rat-denom x)))
+                (* (rat-denom x) (rat-denom y))))
     (define (sub-rat x y)
-      (make-rat (- (* (numer x) (denom y))
-                   (* (numer y) (denom x)))
-                (* (denom x) (denom y))))
+      (make-rat (- (* (rat-numer x) (rat-denom y))
+                   (* (rat-numer y) (rat-denom x)))
+                (* (rat-denom x) (rat-denom y))))
     (define (mul-rat x y)
-      (make-rat (* (numer x) (numer y))
-                (* (denom x) (denom y))))
+      (make-rat (* (rat-numer x) (rat-numer y))
+                (* (rat-denom x) (rat-denom y))))
     (define (div-rat x y)
-      (make-rat (* (numer x) (denom y))
-                (* (denom x) (numer y))))
+      (make-rat (* (rat-numer x) (rat-denom y))
+                (* (rat-denom x) (rat-numer y))))
     ; interface to the rest of the system
     (define (tag x) (attach-tag 'rational x))
     (put 'add '(rational rational)
@@ -68,23 +68,27 @@
          (lambda (x y) (tag (div-rat x y))))
     (put 'make 'rational
          (lambda (n d) (tag (make-rat n d))))
-    (put 'numer '(rational) numer)
-    (put 'denom '(rational) denom)
+    (put 'numer '(rational) rat-numer)
+    (put 'denom '(rational) rat-denom)
     (put 'equ? '(rational rational)
-         (lambda (x y) (and (= (numer x) (numer y))
-                            (= (denom x) (denom y)))))
+         (lambda (x y) (and (= (rat-numer x) (rat-numer y))
+                            (= (rat-denom x) (rat-denom y)))))
     (put '=zero? '(rational)
-         (lambda (x) (and (= (numer x) 0)
-                          (not (= (denom x) 0)))))
+         (lambda (x) (and (= (rat-numer x) 0)
+                          (not (= (rat-denom x) 0)))))
     )
 
   (install-rational-package)
 
   (define (make-rational n d)
     ((get 'make 'rational) n d))
-  (define (numer x) (apply-generic 'numer x))
-  (define (denom x) (apply-generic 'denom x))
+  (define (numer x) (apply-generic-tower 'numer x))
+  (define (denom x) (apply-generic-tower 'denom x))
 
+  (define (real z) (apply-generic-tower 'real z))
+  (define (imag z) (apply-generic-tower 'imag z))
+  (define (mag z) (apply-generic-tower 'mag z))
+  (define (ang z) (apply-generic-tower 'ang z))
   (define (install-complex-package)
     ; imported procedures from rectangular and polar packages
     (define (make-from-real-imag x y)
@@ -146,7 +150,6 @@
                           (= (imag x) 0))))
     )
   (install-complex-package)
-
   (define (make-complex-from-real-imag x y)
     ((get 'make-from-real-imag 'complex) x y))
   (define (make-complex-from-mag-ang r a)
@@ -155,10 +158,72 @@
   ; Exercise 2.79, page 261
   ; equ? implementations installed in the above packages
   (define (equ? x y)
-    (apply-generic 'equ? x y))
+    (apply-generic-tower 'equ? x y))
 
   ; Exercise 2.80, page 261
   ; =zero? implementations installed in the above packages
   (define (=zero? x)
-    (apply-generic '=zero? x))
+    (apply-generic-tower '=zero? x))
+
+  ; Exercise 2.83, page 272
+  (define (install-tower-package)
+    (put 'tower-raise '(integer)
+         (lambda (x)
+           (make-rational x 1)))
+    (put 'tower-raise '(rational)
+         (lambda (x)
+           (* (/ (rat-numer x) (rat-denom x)) 1.0)))
+    (put 'tower-raise '(real)
+         (lambda (x)
+           (make-complex-from-real-imag x 0)))
+    (put 'tower-order '(integer)
+         (lambda (x) 1))
+    (put 'tower-order '(rational)
+         (lambda (x) 2))
+    (put 'tower-order '(real)
+         (lambda (x) 3))
+    (put 'tower-order '(complex)
+         (lambda (x) 4)))
+  (install-tower-package)
+  (define (tower-raise x)
+    (apply-generic 'tower-raise x))
+  (define (tower-order x)
+    (apply-generic 'tower-order x))
+  (define tower-top 4)
+
+  (define (get-highest args)
+    (define (loop remaining current-highest)
+      (cond ((null? remaining) current-highest)
+            ((> (tower-order (car remaining))
+                (tower-order current-highest))
+             (loop (cdr remaining) (car remaining)))
+            (else (loop (cdr remaining) current-highest))))
+    (if (null? args)
+      '()
+      (loop (cdr args) (car args))))
+  (define (raise-to target x)
+    (if (<= (tower-order target) (tower-order x))
+      x
+      (raise-to target (tower-raise x))))
+
+  ; Exercise 2.84, page 272
+  (define (apply-generic-tower op . args)
+    ; special case for one argument, raise until
+    ; it works or fails
+    (if (= (length args) 1)
+      (let ((type-tags (map type-tag args)))
+        (let ((proc (get op type-tags)))
+          (cond (proc (apply proc (map contents args)))
+                ((= tower-top (tower-order (car args)))
+                 (error "No method for these types: apply-generic-tower"
+                        (list op type-tags)))
+                (else (apply-generic-tower op (tower-raise (car args)))))))
+      (let ((raised-args (map (lambda (x) (raise-to (get-highest args) x)) args)))
+        (let ((type-tags (map type-tag raised-args)))
+          (let ((proc (get op type-tags)))
+            (if proc
+              (apply proc (map contents raised-args))
+              (error
+                "No method for these types: apply-generic-tower"
+                (list op type-tags))))))))
   )

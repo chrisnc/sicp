@@ -1,6 +1,6 @@
 ; Common procedures for data-directed programming with type coercion
 
-(module data-directed racket/base
+(module dd-coerce racket/base
   (provide apply-generic-coerce put-coercion get-coercion)
 
   (require "dd-common.rkt")

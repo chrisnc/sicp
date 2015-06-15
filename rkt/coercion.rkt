@@ -4,19 +4,19 @@
 (require "dd-coerce.rkt")
 (require "dd-numbers.rkt")
 
-(define (scheme-number->complex n)
+(define (integer->complex n)
   (make-complex-from-real-imag (contents n) 0))
-(put-coercion 'scheme-number 'complex scheme-number->complex)
+(put-coercion 'integer 'complex integer->complex)
 
 ; part a, page 271
 
-(define (scheme-number->scheme-number n) n)
+(define (integer->integer n) n)
 (define (complex->complex z) z)
-(put-coercion 'scheme-number 'scheme-number scheme-number->scheme-number)
+(put-coercion 'integer 'integer integer->integer)
 (put-coercion 'complex 'complex complex->complex)
 
 (define (exp x y) (apply-generic-coerce 'exp x y))
-(put 'exp '(scheme-number scheme-number)
+(put 'exp '(integer integer)
      (lambda (x y) (expt x y)))
 
 ; The given implementation of apply-generic-coerce will enter an infinite loop

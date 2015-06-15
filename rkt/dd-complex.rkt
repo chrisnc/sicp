@@ -1,7 +1,7 @@
 ; Section 2.4.3, Data-Directed Programming and Additivity, page 242
 
-(module complex racket/base
-  (provide real imag mag ang make-from-real-imag make-from-mag-ang)
+(module dd-complex racket/base
+  (provide make-from-real-imag make-from-mag-ang)
 
   (require "dd-common.rkt")
 
@@ -57,10 +57,6 @@
 
   (install-polar-package)
 
-  (define (real z) (apply-generic 'real z))
-  (define (imag z) (apply-generic 'imag z))
-  (define (mag z) (apply-generic 'mag z))
-  (define (ang z) (apply-generic 'ang z))
   (define (make-from-real-imag x y)
     ((get 'make-from-real-imag 'rectangular) x y))
   (define (make-from-mag-ang r a)
