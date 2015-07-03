@@ -5,7 +5,8 @@
            make-complex-from-real-imag
            make-complex-from-mag-ang
            equ? =zero? real imag mag ang
-           tower-raise tower-order)
+           tower-raise tower-order
+           project tower-drop)
 
   (require "dd-common.rkt")
   (require "dd-complex.rkt")
@@ -21,7 +22,8 @@
     (put 'mul '(integer integer) *)
     (put 'div '(integer integer) /)
     (put 'equ? '(integer integer) =)
-    (put '=zero? '(integer) zero?))
+    (put '=zero? '(integer) zero?)
+    (put 'project '(integer) (lambda (x) x)))
   (install-integer-package)
 
   (define (install-real-package)
@@ -30,7 +32,11 @@
     (put 'mul '(real real) *)
     (put 'div '(real real) /)
     (put 'equ? '(real real) =)
-    (put '=zero? '(real) zero?))
+    (put '=zero? '(real) zero?)
+    (put 'project '(real)
+         (lambda (x)
+           (make-rational (inexact->exact x) 1)))
+    )
   (install-real-package)
 
 
@@ -76,6 +82,9 @@
     (put '=zero? '(rational)
          (lambda (x) (and (= (rat-numer x) 0)
                           (not (= (rat-denom x) 0)))))
+    (put 'project '(rational)
+         (lambda (x)
+           (round (inexact->exact (/ (rat-numer x) (rat-denom x))))))
     )
 
   (install-rational-package)
@@ -148,12 +157,14 @@
     (put '=zero? '(complex)
          (lambda (x) (and (= (real x) 0)
                           (= (imag x) 0))))
+    (put 'project '(complex)
+         (lambda (x) (* 1.0 (real x))))
     )
   (install-complex-package)
   (define (make-complex-from-real-imag x y)
-    ((get 'make-from-real-imag 'complex) x y))
+    ((get 'make-from-real-imag 'complex) (* 1.0 x) (* 1.0 y)))
   (define (make-complex-from-mag-ang r a)
-    ((get 'make-from-mag-ang 'complex) r a))
+    ((get 'make-from-mag-ang 'complex) (* 1.0 r) (* 1.0 a)))
 
   ; Exercise 2.79, page 261
   ; equ? implementations installed in the above packages
@@ -176,6 +187,8 @@
     (put 'tower-raise '(real)
          (lambda (x)
            (make-complex-from-real-imag x 0)))
+    (put 'tower-raise '(complex)
+         (lambda (x) (attach-tag 'complex x)))
     (put 'tower-order '(integer)
          (lambda (x) 1))
     (put 'tower-order '(rational)
@@ -222,8 +235,17 @@
         (let ((type-tags (map type-tag raised-args)))
           (let ((proc (get op type-tags)))
             (if proc
-              (apply proc (map contents raised-args))
+              (tower-drop (apply proc (map contents raised-args))) ; for Exercise 2.85
               (error
                 "No method for these types: apply-generic-tower"
                 (list op type-tags))))))))
+
+  (define (project x) (apply-generic 'project x))
+
+  ; Exercise 2.85, page 272
+  (define (tower-drop x)
+    (let ((xd (project x)))
+      (if (equal? (tower-raise xd) x)
+        (tower-drop xd)
+        x)))
   )
