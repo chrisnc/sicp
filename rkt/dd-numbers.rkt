@@ -202,6 +202,7 @@
     (apply-generic 'tower-raise x))
   (define (tower-order x)
     (apply-generic 'tower-order x))
+  (define tower-bottom 1)
   (define tower-top 4)
 
   (define (get-highest args)
@@ -235,7 +236,10 @@
         (let ((type-tags (map type-tag raised-args)))
           (let ((proc (get op type-tags)))
             (if proc
-              (tower-drop (apply proc (map contents raised-args))) ; for Exercise 2.85
+              (let ((res (apply proc (map contents raised-args))))
+                (if (get 'tower-order (list (type-tag res)))
+                  (tower-drop res) ; for Exercise 2.85
+                  res))
               (error
                 "No method for these types: apply-generic-tower"
                 (list op type-tags))))))))
@@ -244,8 +248,10 @@
 
   ; Exercise 2.85, page 272
   (define (tower-drop x)
-    (let ((xd (project x)))
-      (if (equal? (tower-raise xd) x)
-        (tower-drop xd)
-        x)))
+    (if (= (tower-order x) tower-bottom)
+      x ; we enter into a loop without this base case, because integers always project to themselves
+      (let ((xd (project x)))
+        (if (equ? xd x) ; equ? will raise xd because it uses apply-generic-tower
+          (tower-drop xd)
+          x))))
   )

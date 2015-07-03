@@ -17,10 +17,10 @@
   (define (type-tag x)
     (cond ((exact-integer? x) 'integer)
           ((real? x) 'real)
-          (else (car x))))
+          ((pair? x) (car x))
+          (else #f)))
   (define (contents x)
-    (cond ((number? x) x)
-          (else (cdr x))))
+    (if (pair? x) (cdr x) x))
   (define attach-tag cons)
 
   (define (apply-generic op . args)
