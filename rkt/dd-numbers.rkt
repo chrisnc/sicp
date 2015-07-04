@@ -2,6 +2,7 @@
 
 (module dd-numbers racket/base
   (provide add sub mul div make-rational numer denom
+           cosine sine arctan square-root
            make-complex-from-real-imag
            make-complex-from-mag-ang
            equ? =zero? real imag mag ang
@@ -9,7 +10,6 @@
            project tower-drop)
 
   (require "dd-common.rkt")
-  (require "dd-complex.rkt")
 
   (define (add x y) (apply-generic-tower 'add x y))
   (define (sub x y) (apply-generic-tower 'sub x y))
@@ -23,7 +23,12 @@
     (put 'div '(integer integer) /)
     (put 'equ? '(integer integer) =)
     (put '=zero? '(integer) zero?)
-    (put 'project '(integer) (lambda (x) x)))
+    (put 'project '(integer) (lambda (x) x))
+    (put 'cosine '(integer) cos)
+    (put 'sine '(integer) sin)
+    (put 'square-root '(integer) sqrt)
+    (put 'arctan '(integer integer) atan)
+    )
   (install-integer-package)
 
   (define (install-real-package)
@@ -36,9 +41,12 @@
     (put 'project '(real)
          (lambda (x)
            (make-rational (inexact->exact x) 1)))
+    (put 'cosine '(real) cos)
+    (put 'sine '(real) sin)
+    (put 'square-root '(real) sqrt)
+    (put 'arctan '(real real) atan)
     )
   (install-real-package)
-
 
   ; expose these for the tower implementation
   (define rat-numer car)
@@ -85,8 +93,23 @@
     (put 'project '(rational)
          (lambda (x)
            (round (inexact->exact (/ (rat-numer x) (rat-denom x))))))
+    (put 'cosine '(rational)
+         (lambda (x) (cos (/ (rat-numer x) (rat-denom x)))))
+    (put 'sine '(rational)
+         (lambda (x) (sin (/ (rat-numer x) (rat-denom x)))))
+    (put 'square-root '(rational)
+         (lambda (x)
+           (let ((sqtn (sqrt (rat-numer x)))
+                 (sqtd (sqrt (rat-denom x))))
+             (if (and (exact? sqtn)
+                      (exact? sqtd))
+               (make-rational sqtn sqtd)
+               (/ sqtn sqtd)))))
+    (put 'arctan '(rational rational)
+         (lambda (x y)
+           (atan (/ (rat-numer x) (rat-denom x))
+                 (/ (rat-numer y) (rat-denom y)))))
     )
-
   (install-rational-package)
 
   (define (make-rational n d)
@@ -98,6 +121,73 @@
   (define (imag z) (apply-generic-tower 'imag z))
   (define (mag z) (apply-generic-tower 'mag z))
   (define (ang z) (apply-generic-tower 'ang z))
+
+  (define (square x) (mul x x))
+
+  (define (arctan x y) (apply-generic-tower 'arctan x y))
+  (define (cosine x) (apply-generic-tower 'cosine x))
+  (define (sine x) (apply-generic-tower 'sine x))
+  (define (square-root x) (apply-generic-tower 'square-root x))
+
+  ; Section 2.4.3, Data-Directed Programming and Additivity, page 242
+  ; Exercise 2.86, page 273
+  ; We needed to change the internal implementation of the complex number
+  ; packages to use generic versions of add, sub, div, mul, as welel as define
+  ; and implement generic versions of cosine, sine, arctan, and square-root
+  ; functions for the other number types.
+  (define (install-rectangular-package)
+    ; internal procedures
+    (define (real z) (car z))
+    (define (imag z) (cdr z))
+    (define (make-from-real-imag x y) (cons x y))
+    (define (mag z)
+      (square-root (add (square (real z))
+                        (square (imag z)))))
+    (define (ang z)
+      (arctan (imag z) (real z)))
+    (define (make-from-mag-ang r a)
+      (cons (mul r (cosine a)) (mul r (sine a))))
+
+    ; interface to the rest of the system
+    (define (tag x) (attach-tag 'rectangular x))
+    (put 'real '(rectangular) real)
+    (put 'imag '(rectangular) imag)
+    (put 'mag '(rectangular) mag)
+    (put 'ang '(rectangular) ang)
+    (put 'make-from-real-imag 'rectangular
+         (lambda (x y) (tag (make-from-real-imag x y))))
+    (put 'make-from-mag-ang 'rectangular
+         (lambda (r a) (tag (make-from-mag-ang r a)))))
+  (install-rectangular-package)
+
+  (define (install-polar-package)
+    ; internal procedures
+    (define (mag z) (car z))
+    (define (ang z) (cdr z))
+    (define (make-from-mag-ang r a) (cons r a))
+    (define (real z) (mul (mag z) (cosine (ang z))))
+    (define (imag z) (mul (mag z) (sine (ang z))))
+    (define (make-from-real-imag x y)
+      (cons (square-root (add (square x) (square y)))
+            (arctan y x)))
+
+    ; interface to the rest of the system
+    (define (tag x) (attach-tag 'polar x))
+    (put 'real '(polar) real)
+    (put 'imag '(polar) imag)
+    (put 'mag '(polar) mag)
+    (put 'ang '(polar) ang)
+    (put 'make-from-real-imag 'polar
+         (lambda (x y) (tag (make-from-real-imag x y))))
+    (put 'make-from-mag-ang 'polar
+         (lambda (r a) (tag (make-from-mag-ang r a)))))
+  (install-polar-package)
+
+  (define (make-from-real-imag x y)
+    ((get 'make-from-real-imag 'rectangular) x y))
+  (define (make-from-mag-ang r a)
+    ((get 'make-from-mag-ang 'polar) r a))
+
   (define (install-complex-package)
     ; imported procedures from rectangular and polar packages
     (define (make-from-real-imag x y)
@@ -106,17 +196,17 @@
       ((get 'make-from-mag-ang 'polar) r a))
     ; internal procedures
     (define (add-complex z1 z2)
-      (make-from-real-imag (+ (real z1) (real z2))
-                           (+ (imag z1) (imag z2))))
+      (make-from-real-imag (add (real z1) (real z2))
+                           (add (imag z1) (imag z2))))
     (define (sub-complex z1 z2)
-      (make-from-real-imag (- (real z1) (real z2))
-                           (- (imag z1) (imag z2))))
+      (make-from-real-imag (sub (real z1) (real z2))
+                           (sub (imag z1) (imag z2))))
     (define (mul-complex z1 z2)
-      (make-from-mag-ang (* (mag z1) (mag z2))
-                         (+ (ang z1) (ang z2))))
+      (make-from-mag-ang (mul (mag z1) (mag z2))
+                         (add (ang z1) (ang z2))))
     (define (div-complex z1 z2)
-      (make-from-mag-ang (/ (mag z1) (mag z2))
-                         (- (ang z1) (ang z2))))
+      (make-from-mag-ang (div (mag z1) (mag z2))
+                         (sub (ang z1) (ang z2))))
     ; interface to rest of the system
     (define (tag z) (attach-tag 'complex z))
     (put 'add '(complex complex)
@@ -152,19 +242,30 @@
     (put 'mag '(complex) mag)
     (put 'ang '(complex) ang)
     (put 'equ? '(complex complex)
-         (lambda (x y) (and (= (real x) (real y))
-                            (= (imag x) (imag y)))))
+         (lambda (x y) (and (equ? (real x) (real y))
+                            (equ? (imag x) (imag y)))))
     (put '=zero? '(complex)
-         (lambda (x) (and (= (real x) 0)
-                          (= (imag x) 0))))
+         (lambda (x) (and (equ? (real x) 0)
+                          (equ? (imag x) 0))))
     (put 'project '(complex)
-         (lambda (x) (* 1.0 (real x))))
+         ; Coerce the real component's representation to be a real number
+         ; so that project works predictably. (real x) can be an integer, rational, or real
+         ; and adding 0.0 will cause it to be promoted to a real number in all cases.
+         ; (mul 1.0 (real x)) doesn't work because if (real x) is exact 0 then (* 1.0 0)
+         ; is also exact 0, not 0.0. This "down" coercion for 0 is a quirk of scheme (and racket).
+         (lambda (x) (add 0.0 (real x))))
+    (put 'square-root '(complex)
+         (lambda (x)
+           (make-complex-from-mag-ang
+             (square-root (mag x))
+             (div (ang x) 2))))
     )
   (install-complex-package)
+
   (define (make-complex-from-real-imag x y)
-    ((get 'make-from-real-imag 'complex) (* 1.0 x) (* 1.0 y)))
+    ((get 'make-from-real-imag 'complex) x y))
   (define (make-complex-from-mag-ang r a)
-    ((get 'make-from-mag-ang 'complex) (* 1.0 r) (* 1.0 a)))
+    ((get 'make-from-mag-ang 'complex) r a))
 
   ; Exercise 2.79, page 261
   ; equ? implementations installed in the above packages
@@ -198,10 +299,9 @@
     (put 'tower-order '(complex)
          (lambda (x) 4)))
   (install-tower-package)
-  (define (tower-raise x)
-    (apply-generic 'tower-raise x))
-  (define (tower-order x)
-    (apply-generic 'tower-order x))
+
+  (define (tower-raise x) (apply-generic 'tower-raise x))
+  (define (tower-order x) (apply-generic 'tower-order x))
   (define tower-bottom 1)
   (define tower-top 4)
 
