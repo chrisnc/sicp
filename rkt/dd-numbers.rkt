@@ -222,8 +222,8 @@
     (put 'make-from-mag-ang 'complex
          (lambda (r a) (tag (make-from-mag-ang r a))))
     ; Exercise 2.77, page 260
-    ; This works because real, imag, mag, and ang were defined in the dd-complex
-    ; package to dispatch using apply-generic. The following occurs when we call
+    ; This works because real, imag, mag, and ang are defined to dispatch using
+    ; apply-generic. The following occurs when we call mag.
     ; 1. (mag '(complex rectangular 3 . 4))
     ; 2. (apply-generic 'mag '(complex rectangular 3 . 4))
     ; 3. (mag '(rectangular 3 . 4))

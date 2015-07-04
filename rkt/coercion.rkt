@@ -1,4 +1,4 @@
-; Exercise 2.81, page 270 procedures for type coercion.
+; Exercise 2.81, page 270
 
 (require "dd-common.rkt")
 (require "dd-coerce.rkt")

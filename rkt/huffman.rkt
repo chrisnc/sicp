@@ -137,16 +137,14 @@
 ; If we used the fixed-length encoding, with 3 bits per symbol,
 ; we could encode the message with 36 * 3 = 108 bits.
 
-
-; Exercise 2.71
+; Exercise 2.71, page 228
 ; With alphabets where the weights are 1,2,4,...,2^{n-1}, the generated Huffman
 ; tree will always have a long left (or right) spine, because we always merge
 ; only one additional symbol (the one with the next largest weight).
 ; This will lead to only one bit being required to encode the most frequent
 ; symbol, and n - 1 bits needed to encode the least frequent.
 
-; Exercise 2.72
-
+; Exercise 2.72, page 229
 ; In the special case of frequencies given by 1,2,4,...,2^{n-1}, the
 ; number of steps needed to encode the most frequent symbol will be O(1).
 ; The root of the tree will have the left branch with just the most frequent

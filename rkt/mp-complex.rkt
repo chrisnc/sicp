@@ -1,4 +1,4 @@
-; Exercise 2.75, complex number constructor in message passing style page 253
+; Exercise 2.75, complex number constructor in message passing style, page 253
 
 (define (square x) (* x x))
 

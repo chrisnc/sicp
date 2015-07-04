@@ -128,7 +128,7 @@
 ; So multiplying two intervals together will approximately add their percentage
 ; uncertainties.
 
-; Exercise 2.14
+; Exercise 2.14, page 131
 (define (par1 r1 r2)
   (div-interval (mul-interval r1 r2)
                 (add-interval r1 r2)))
@@ -144,7 +144,7 @@
 (par1 a b)
 (par2 a b)
 
-; Exercise 2.15
+; Exercise 2.15, page 132
 ; Essentially, repeating a value in an expression causes increased inaccuracy
 ; because we cannot communicate to the interval arithmetic functions that the
 ; uncertainty in two intervals in a compound expression is 100% correlated.
@@ -155,7 +155,7 @@
 ; correct; using expressions that do not repeat uncertain values will produce
 ; tighter error bounds.
 
-; Exercise 2.16
+; Exercise 2.16, page 132
 ; Equivalent algebraic expressions may lead to different answers because we can
 ; always cause a term to appear more than once, and our interval arithmetic
 ; functions don't have any knowledge of correlated uncertainty, all
