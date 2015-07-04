@@ -183,7 +183,7 @@
            (make-rational x 1)))
     (put 'tower-raise '(rational)
          (lambda (x)
-           (* (/ (rat-numer x) (rat-denom x)) 1.0)))
+           (exact->inexact (/ (rat-numer x) (rat-denom x)))))
     (put 'tower-raise '(real)
          (lambda (x)
            (make-complex-from-real-imag x 0)))
