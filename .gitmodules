@@ -1,3 +1,3 @@
 [submodule "sicp-pdf"]
-    path = sicp-pdf
-    url = git@github.com:sarabander/sicp-pdf.git
+	path = sicp-pdf
+	url = git@github.com:sarabander/sicp-pdf.git
