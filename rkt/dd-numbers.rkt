@@ -132,7 +132,7 @@
   ; Section 2.4.3, Data-Directed Programming and Additivity, page 242
   ; Exercise 2.86, page 273
   ; We needed to change the internal implementation of the complex number
-  ; packages to use generic versions of add, sub, div, mul, as welel as define
+  ; packages to use generic versions of add, sub, div, mul, as well as define
   ; and implement generic versions of cosine, sine, arctan, and square-root
   ; functions for the other number types.
   (define (install-rectangular-package)
