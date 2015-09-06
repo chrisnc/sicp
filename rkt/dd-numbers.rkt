@@ -7,14 +7,15 @@
            make-complex-from-mag-ang
            equ? =zero? real imag mag ang
            tower-raise tower-order
-           project tower-drop)
+           project tower-drop
+           make-polynomial)
 
   (require "dd-common.rkt")
 
-  (define (add x y) (apply-generic-tower 'add x y))
-  (define (sub x y) (apply-generic-tower 'sub x y))
-  (define (mul x y) (apply-generic-tower 'mul x y))
-  (define (div x y) (apply-generic-tower 'div x y))
+  (define (add x y) (apply-generic 'add x y))
+  (define (sub x y) (apply-generic 'sub x y))
+  (define (mul x y) (apply-generic 'mul x y))
+  (define (div x y) (apply-generic 'div x y))
 
   (define (install-integer-package)
     (put 'add '(integer integer) +)
@@ -114,20 +115,20 @@
 
   (define (make-rational n d)
     ((get 'make 'rational) n d))
-  (define (numer x) (apply-generic-tower 'numer x))
-  (define (denom x) (apply-generic-tower 'denom x))
+  (define (numer x) (apply-generic 'numer x))
+  (define (denom x) (apply-generic 'denom x))
 
-  (define (real z) (apply-generic-tower 'real z))
-  (define (imag z) (apply-generic-tower 'imag z))
-  (define (mag z) (apply-generic-tower 'mag z))
-  (define (ang z) (apply-generic-tower 'ang z))
+  (define (real z) (apply-generic 'real z))
+  (define (imag z) (apply-generic 'imag z))
+  (define (mag z) (apply-generic 'mag z))
+  (define (ang z) (apply-generic 'ang z))
 
   (define (square x) (mul x x))
 
-  (define (arctan x y) (apply-generic-tower 'arctan x y))
-  (define (cosine x) (apply-generic-tower 'cosine x))
-  (define (sine x) (apply-generic-tower 'sine x))
-  (define (square-root x) (apply-generic-tower 'square-root x))
+  (define (arctan x y) (apply-generic 'arctan x y))
+  (define (cosine x) (apply-generic 'cosine x))
+  (define (sine x) (apply-generic 'sine x))
+  (define (square-root x) (apply-generic 'square-root x))
 
   ; Section 2.4.3, Data-Directed Programming and Additivity, page 242
   ; Exercise 2.86, page 273
@@ -270,12 +271,12 @@
   ; Exercise 2.79, page 261
   ; equ? implementations installed in the above packages
   (define (equ? x y)
-    (apply-generic-tower 'equ? x y))
+    (apply-generic 'equ? x y))
 
   ; Exercise 2.80, page 261
   ; =zero? implementations installed in the above packages
   (define (=zero? x)
-    (apply-generic-tower '=zero? x))
+    (apply-generic '=zero? x))
 
   ; Exercise 2.83, page 272
   (define (install-tower-package)
@@ -354,4 +355,93 @@
         (if (equ? xd x) ; equ? will raise xd because it uses apply-generic-tower
           (tower-drop xd)
           x))))
+
+  ; Section 2.5.3, Example: Symbolic Algebra, page 274
+  (define (install-polynomial-package)
+    ; internal procedures
+    ; representation of poly
+    (define make-poly cons)
+    (define variable car)
+    (define term-list cdr)
+
+    (define variable? symbol?)
+    (define (same-variable? v1 v2)
+      (and (variable? v1) (variable? v2) (eq? v1 v2)))
+
+    ; representation of terms and term lists
+    (define (adjoin-term term term-list)
+      (if (=zero? (coeff term))
+        term-list
+        (cons term term-list)))
+    (define (the-empty-termlist) '())
+    (define first-term car)
+    (define rest-terms cdr)
+    (define empty-termlist? null?)
+    (define (make-term order coeff) (list order coeff))
+    (define order car)
+    (define coeff cadr)
+
+    (define (add-poly p1 p2)
+      (if (same-variable? (variable p1) (variable p2))
+        (make-poly (variable p1)
+                   (add-terms (term-list p1) (term-list p2)))
+        (error "Polys not in same var: add-poly" (list p1 p2))))
+
+    (define (add-terms l1 l2)
+      (cond ((empty-termlist? l1) l2)
+            ((empty-termlist? l2) l1)
+            (else
+              (let ((t1 (first-term l1))
+                    (t2 (first-term l2)))
+                (cond ((> (order t1) (order t2))
+                       (adjoin-term
+                         t1 (add-terms (rest-terms l1) l2)))
+                      ((< (order t1) (order t2))
+                       (adjoin-term
+                         t2 (add-terms l1 (rest-terms l2))))
+                      (else
+                        (adjoin-term
+                          (make-term (order t1)
+                                     (add (coeff t1) (coeff t2)))
+                          (add-terms (rest-terms l1)
+                                     (rest-terms l2)))))))))
+    (define (mul-terms l1 l2)
+      (if (empty-termlist? l1)
+        (the-empty-termlist)
+        (add-terms (mul-term-by-all-terms (first-term l1) l2)
+                   (mul-terms (rest-terms l1) l2))))
+    (define (mul-term-by-all-terms t1 l)
+      (if (empty-termlist? l)
+        (the-empty-termlist)
+        (let ((t2 (first-term l)))
+          (adjoin-term
+            (make-term (+ (order t1) (order t2))
+                       (mul (coeff t1) (coeff t2)))
+            (mul-term-by-all-terms t1 (rest-terms l))))))
+
+    (define (mul-poly p1 p2)
+      (if (same-variable? (variable p1) (variable p2))
+        (make-poly (variable p1)
+                   (mul-terms (term-list p1) (term-list p2)))
+        (error "Polys not in same var: mul-poly" (list p1 p2))))
+
+    ; interface to rest of the system
+    (define (tag p) (attach-tag 'polynomial p))
+    (put 'add '(polynomial polynomial)
+         (lambda (p1 p2) (tag (add-poly p1 p2))))
+    (put 'mul '(polynomial polynomial)
+         (lambda (p1 p2) (tag (mul-poly p1 p2))))
+    (put 'make 'polynomial
+         (lambda (var terms) (tag (make-poly var terms))))
+    (put 'equ? '(polynomial polynomial) equal?)
+    ; Exercise 2.87, page 283
+    (put '=zero? '(polynomial)
+         (lambda (p) (or (empty-termlist? (term-list p))
+                         (foldl (lambda (a b) (and a b)) #t
+                                (map (lambda (term) (=zero? (coeff term))) (term-list p))))))
+    )
+  (install-polynomial-package)
+
+  (define (make-polynomial var terms)
+    ((get 'make 'polynomial) var terms))
   )
